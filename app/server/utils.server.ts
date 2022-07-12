@@ -20,6 +20,7 @@ export const generateGoogleSignUpUrl = () => {
 
   const scopes = [
     "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube.readonly",
     "openid email profile",
   ];
 
@@ -32,6 +33,7 @@ export const generateGoogleSignUpUrl = () => {
   return authorizationUrl;
 };
 
+
 export const badRequest = <Data = unknown>(data: Data) => {
   return json(data, { status: 401 });
 };
@@ -39,7 +41,8 @@ export const badRequest = <Data = unknown>(data: Data) => {
 export type EnvVarNames =
   | "GOOGLE_API_CLIENT_ID"
   | "GOOGLE_API_CLIENT_SECRET"
-  | "GOOGLE_API_REDIRECT_URI";
+  | "GOOGLE_API_REDIRECT_URI"
+  | "SESSION_SECRET";
 
 export const getEnvVar = (varName: EnvVarNames): string => {
   const envVarValue = process.env[varName];

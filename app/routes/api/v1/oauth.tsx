@@ -3,6 +3,7 @@ import { redirect } from "@remix-run/server-runtime";
 import jwtDecode from "jwt-decode";
 import { type } from "os";
 import { prisma } from "~/db.server";
+import { createUserSession } from "~/server/session.server";
 import { getGoogleOAuthClient } from "~/server/utils.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -63,6 +64,8 @@ export const loader: LoaderFunction = async ({ request }) => {
           },
         },
       });
+      const redirectRes = await createUserSession(userId, "/");
+      return redirectRes;
     } else {
       const updatedOAuthToken = await prisma.oAuthToken.update({
         where: { userId: isUserPresent.userId },
@@ -76,7 +79,9 @@ export const loader: LoaderFunction = async ({ request }) => {
         data: { token: refresh_token },
       });
 
-      //   await prisma.oAuthToken.update({ where: {} });
+      const userId = isUserPresent.userId;
+      const redirectRes = await createUserSession(userId, "/");
+      return redirectRes;
     }
   } catch (err) {
     console.log(err);
