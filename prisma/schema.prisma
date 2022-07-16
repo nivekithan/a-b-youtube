@@ -11,34 +11,20 @@ generator client {
 
 model User {
 
-  userId    String @id @unique
-  name      String @db.Text
-  googleSub String @db.VarChar(255) @unique
-  pictureUrl String @db.Text
-
-  oAuthToken   OAuthToken?
-  refreshToken RefreshToken?
-
+  userId          String           @id @unique
+  name            String           @db.Text
+  googleSub       String           @unique @db.VarChar(255)
+  pictureUrl      String           @db.Text
+  youtubeAccounts YoutubeAccount[]
 }
 
-model OAuthToken {
-  id Int @id @default(autoincrement())
+model YoutubeAccount {
+  accountId Int @id @unique @default(autoincrement())
 
-  user         User         @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
-  token        String       @db.Text
-  refreshToken RefreshToken @relation(fields: [refreshTokenId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userId], references: [userId])
+  oauthToken String @db.Text
+  refreshToken String @db.Text
+  
 
-  refreshTokenId Int    @unique
-  userId         String @unique
-}
-
-model RefreshToken {
-  id Int @id @default(autoincrement())
-
-  oauthToken OAuthToken?
-  user       User        @relation(fields: [userId], references: [userId])
-  token      String      @db.Text
-
-
-  userId String @unique
+  userId String 
 }

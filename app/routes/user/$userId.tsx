@@ -3,7 +3,7 @@ import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { z } from "zod";
 import { UserCard } from "~/components/user";
-import { getUserFromUserId, requireUserId } from "~/models/user.server";
+import {  requireUserFromUserId, requireUserId } from "~/models/user.server";
 import type { ClientUser } from "~/zSchemas/zSchema";
 import { ZClientUserSchema } from "~/zSchemas/zSchema";
 
@@ -13,7 +13,8 @@ type LoaderData = z.infer<typeof ZLoaderSchema>;
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request, "/");
-  const user = await getUserFromUserId(userId);
+  const user = await requireUserFromUserId(userId);
+
 
   const clientUser: ClientUser = {
     name: user.name,
@@ -29,7 +30,7 @@ const useZLoaderData = (): LoaderData => {
   return ZLoaderSchema.parse(loaderData);
 };
 
-export default function RenderUserHomePage() {
+export default function RenderUserPage() {
   const loaderData = useZLoaderData();
 
   return (
