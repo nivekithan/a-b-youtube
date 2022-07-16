@@ -38,6 +38,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 
     const name = id.name as string;
     const sub = id.sub as string;
+    const pictureUrl = id.picture as string;
+
+    console.log(pictureUrl);
 
     const isUserPresent = await prisma.user.findUnique({
       where: { googleSub: sub },
@@ -50,6 +53,7 @@ export const loader: LoaderFunction = async ({ request }) => {
           googleSub: sub,
           name,
           userId: userId,
+          pictureUrl: pictureUrl,
           oAuthToken: {
             create: {
               token: access_token,

@@ -1,7 +1,6 @@
 import {
   createCookie,
   createCookieSessionStorage,
-  createSessionStorage,
   redirect,
 } from "@remix-run/node";
 import { getEnvVar } from "./utils.server";

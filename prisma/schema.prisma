@@ -14,6 +14,7 @@ model User {
   userId    String @id @unique
   name      String @db.Text
   googleSub String @db.VarChar(255) @unique
+  pictureUrl String @db.Text
 
   oAuthToken   OAuthToken?
   refreshToken RefreshToken?

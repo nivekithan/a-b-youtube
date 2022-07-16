@@ -1,7 +1,8 @@
-import { useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { z } from "zod";
+import { UserCard } from "~/components/user";
 import { getUserFromUserId, requireUserId } from "~/models/user.server";
 import type { ClientUser } from "~/zSchemas/zSchema";
 import { ZClientUserSchema } from "~/zSchemas/zSchema";
@@ -14,7 +15,11 @@ export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request, "/");
   const user = await getUserFromUserId(userId);
 
-  const clientUser: ClientUser = { name: user.name, userId: userId };
+  const clientUser: ClientUser = {
+    name: user.name,
+    userId: userId,
+    pictureUrl: user.pictureUrl,
+  };
 
   return json<LoaderData>({ clientUser: clientUser });
 };
@@ -28,8 +33,15 @@ export default function RenderUserHomePage() {
   const loaderData = useZLoaderData();
 
   return (
-    <p>
-      {`The name of user is ${loaderData.clientUser.name} and the userId is ${loaderData.clientUser.userId}`}
-    </p>
+    <div className="flex">
+      <div className="h-screen sticky top-0 border-r-2 ">
+        <div className="p-2">
+          <UserCard clientUser={loaderData.clientUser} />
+        </div>
+      </div>
+      <div className="flex-grow">
+        <Outlet />
+      </div>
+    </div>
   );
 }

@@ -7,8 +7,8 @@ export type TUser = {
   oauthToken: string;
   refreshToken: string;
   name: string;
+  pictureUrl: string;
 };
-
 
 export const getUserFromUserId = async (userId: string): Promise<TUser> => {
   const userDb = await prisma.user.findUniqueOrThrow({
@@ -27,6 +27,7 @@ export const getUserFromUserId = async (userId: string): Promise<TUser> => {
     name: userDb.name,
     oauthToken: oAuthDb.token,
     refreshToken: refreshDb.token,
+    pictureUrl: userDb.pictureUrl,
   };
 };
 
