@@ -1,10 +1,9 @@
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import jwtDecode from "jwt-decode";
-import { type } from "os";
 import { prisma } from "~/db.server";
+import { getGoogleOAuthClient } from "~/models/google.server";
 import { createUserSession } from "~/server/session.server";
-import { getGoogleOAuthClient } from "~/server/utils.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const { nanoid } = await import("nanoid");

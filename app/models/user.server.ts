@@ -1,15 +1,14 @@
 import { redirect } from "@remix-run/server-runtime";
-import { google } from "googleapis";
 import { prisma } from "~/db.server";
 import { getUserSession } from "~/server/session.server";
-import { getGoogleOAuthClient } from "~/server/utils.server";
-import { refreshToken } from "./oauth.server";
 
 export type TUser = {
   userId: string;
   oauthToken: string;
   refreshToken: string;
+  name: string;
 };
+
 
 export const getUserFromUserId = async (userId: string): Promise<TUser> => {
   const userDb = await prisma.user.findUniqueOrThrow({
@@ -25,6 +24,7 @@ export const getUserFromUserId = async (userId: string): Promise<TUser> => {
 
   return {
     userId,
+    name: userDb.name,
     oauthToken: oAuthDb.token,
     refreshToken: refreshDb.token,
   };
@@ -34,11 +34,20 @@ export const requireUserId = async (
   request: Request,
   redirectTo: string
 ): Promise<string> => {
-  const session = await getUserSession(request);
-  const userId = session.get("userId");
+  const userId = await getUserId(request);
 
-  if (userId === null || typeof userId !== "string") throw redirect(redirectTo);
+  if (userId === null) throw redirect(redirectTo);
 
   return userId;
 };
 
+export const getUserId = async (request: Request): Promise<string | null> => {
+  const session = await getUserSession(request);
+  const userId = session.get("userId");
+
+  if (!userId || typeof userId !== "string") {
+    return null;
+  }
+
+  return userId;
+};

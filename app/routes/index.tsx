@@ -1,119 +1,44 @@
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
+import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
-import { getUserFromUserId, requireUserId } from "~/models/user.server";
-import type {
-  TVideo} from "~/models/videos.server";
-import {
-  getLatestVideosInPlaylist,
-  getUploadPlaylistId
-} from "~/models/videos.server";
-import { getUserSession, removeUserSession } from "~/server/session.server";
-import { badRequest, generateGoogleSignUpUrl } from "~/server/utils.server";
+import { generateGoogleSignUpUrl } from "~/models/google.server";
+import { getUserId } from "~/models/user.server";
+import { z } from "zod";
+import { useLoaderData } from "@remix-run/react";
 
-const validActionTypes = {
-  connectGoogle: "connectGoogle",
-  logout: "logout",
-  getListOfVideos: "getListOfVideos",
-};
+const ZLoaderSchema = z.object({ googleAuthUrl: z.string() });
 
-type ActionData = {
-  errorMessage?: string;
-  listOfVideos?: TVideo[];
-};
-
-type LoaderData = {
-  isLogedIn: boolean;
-};
+type LoaderData = z.infer<typeof ZLoaderSchema>;
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const userSession = await getUserSession(request);
-  const userId = userSession.get("userId");
+  const userId = await getUserId(request);
 
-  if (!userId || typeof userId !== "string")
-    return json<LoaderData>({ isLogedIn: false });
-
-  return json<LoaderData>({ isLogedIn: true });
-};
-
-export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-
-  const actionType = formData.get("actionType");
-
-  if (actionType === null || typeof actionType !== "string") {
-    return badRequest<ActionData>({
-      errorMessage: `Parameter actionType is missing`,
-    });
+  if (userId !== null) {
+    // Then the user is already logged in
+    // redirect the user to home page
+    return redirect(`/user/${userId}`);
   }
 
-  if (!(actionType in validActionTypes))
-    return badRequest<ActionData>({
-      errorMessage: `Unknown actionType ${actionType}`,
-    });
-
-  if (actionType === validActionTypes.connectGoogle) {
-    const redirectUrl = generateGoogleSignUpUrl();
-    return redirect(redirectUrl);
-  } else if (actionType === validActionTypes.logout) {
-    return await removeUserSession(request, "/");
-  } else if (actionType === validActionTypes.getListOfVideos) {
-    const userId = await requireUserId(request, "/");
-    const user = await getUserFromUserId(userId);
-    const currentUserUploadsPlaylistId = await getUploadPlaylistId(user);
-
-    if (currentUserUploadsPlaylistId === null) return json<ActionData>({errorMessage : `Could not upload playlist id`}) ;
-
-    const videos = await getLatestVideosInPlaylist(
-      user,
-      currentUserUploadsPlaylistId
-    );
-
-    if (videos === null) return json<ActionData>({errorMessage : `Could not get videos`}) ;
-     
-    return json<ActionData>({listOfVideos : videos})
-
-  }
+  const googleAuthVerifyUrl = generateGoogleSignUpUrl({ profile: true });
+  return json<LoaderData>({ googleAuthUrl: googleAuthVerifyUrl });
 };
 
-export default function Index() {
-  const loaderData = useLoaderData<LoaderData>();
-  const actionData = useActionData<ActionData>();
+const useZLoaderData = (): LoaderData => {
+  const loaderData = useLoaderData();
+  return ZLoaderSchema.parse(loaderData);
+};
 
-  const isLoggedIn = loaderData.isLogedIn;
+export default function RenderHomePage() {
+  const loaderData = useZLoaderData();
 
   return (
-    <div>
-      <p>User {isLoggedIn ? "is logged in" : "is not logged in"}</p>
-      <Form className="m-5 flex gap-x-8" method="post">
-        <button
-          name="actionType"
-          value={validActionTypes.connectGoogle}
-          className="bg-blue-800 text-white px-3 py-2 rounded-md"
-        >
-          Verify with Google
-        </button>
-
-        <button
-          name="actionType"
-          value={validActionTypes.logout}
-          className="bg-red-800 text-white px-3 py-2 rounded-md"
-        >
-          Logout
-        </button>
-
-        <button
-          className="bg-blue-800 text-white px-3 py-2 rounded-md"
-          name="actionType"
-          value={validActionTypes.getListOfVideos}
-        >
-          Get the list of videos
-        </button>
-      </Form>
-      <pre>
-        {JSON.stringify(actionData, null, 2)}
-      </pre>
+    <div className="h-screen w-screen grid place-items-center">
+      <a
+        href={loaderData.googleAuthUrl}
+        className="border-[3px] border-black font-bold px-14 rounded-md py-2 "
+      >
+        Connect through Google
+      </a>
     </div>
   );
 }
