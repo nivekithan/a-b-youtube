@@ -3,6 +3,8 @@ import { google } from "googleapis";
 import { z } from "zod";
 import { prisma } from "~/db.server";
 import { getGoogleOAuthClient } from "./google.server";
+import type { YoutubeVideo } from "./videos.server";
+import { getRecentVideosFromAccount } from "./videos.server";
 
 export const getCountOfConnectedYoutubeAccounts = async (userId: string) => {
   const count = await prisma.youtubeAccount.count({
@@ -50,6 +52,46 @@ export const getChannelOfToken = async (token: string) => {
 
     throw err;
   }
+};
+
+export const getRecentlyUploadedVideoFromAccounts = async (
+  ...youtubeAccounts: YoutubeAccount[]
+) => {
+  if (youtubeAccounts.length === 0) {
+    return null;
+  }
+
+  const recentVideos = await Promise.all(
+    youtubeAccounts.map(async (account) => {
+      const recentVideos = await getRecentVideosFromAccount(account, 1);
+
+      if (recentVideos.length === 0) {
+        return null;
+      }
+
+      return recentVideos[0];
+    })
+  );
+
+  const recentlyPublishedVideo = recentVideos.reduce(
+    (acc: YoutubeVideo[number] | null, currVideo) => {
+      if (acc === null || currVideo === null) {
+        return currVideo;
+      }
+
+      const accPublishedAt = new Date(acc.snippet.publishedAt).getTime();
+      const currPublishedAt = new Date(currVideo.snippet.publishedAt).getTime();
+
+      if (accPublishedAt < currPublishedAt) {
+        return currVideo;
+      }
+
+      return acc;
+    },
+    null
+  );
+
+  return recentlyPublishedVideo;
 };
 
 export const ifNeededRefreshToken = async (account: YoutubeAccount) => {

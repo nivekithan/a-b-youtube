@@ -7,6 +7,7 @@ import { ifNeededRefreshToken } from "./youtubeAccount.server";
 const ZPlaylistItemsSchema = z.array(
   z.object({
     snippet: z.object({
+      publishedAt: z.string(),
       thumbnails: z.object({
         medium: z.object({
           url: z.string(),
@@ -23,7 +24,8 @@ const ZPlaylistItemsSchema = z.array(
 export type YoutubeVideo = z.infer<typeof ZPlaylistItemsSchema>;
 
 export const getRecentVideosFromAccount = async (
-  youtubeAccount: YoutubeAccount
+  youtubeAccount: YoutubeAccount,
+  count: number
 ) => {
   await ifNeededRefreshToken(youtubeAccount);
   const uploadsPlaylistId = youtubeAccount.uploadsPlaylistId;
@@ -37,7 +39,7 @@ export const getRecentVideosFromAccount = async (
     auth: googleAuthClient,
     part: ["contentDetails", "snippet"],
     playlistId: uploadsPlaylistId,
-    maxResults: 10,
+    maxResults: count,
   });
 
   const items = playlistItemRes.data.items;
