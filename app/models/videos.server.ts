@@ -9,6 +9,11 @@ const ZPlaylistItemsSchema = z.array(
     snippet: z.object({
       publishedAt: z.string(),
       thumbnails: z.object({
+        default: z.object({
+          url: z.string(),
+          width: z.number(),
+          height: z.number(),
+        }),
         medium: z.object({
           url: z.string(),
           width: z.number(),

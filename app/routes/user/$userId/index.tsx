@@ -6,8 +6,7 @@ import { BigOutlineLink } from "~/components/buttonAndLinks";
 import { prisma } from "~/db.server";
 import { generateGoogleSignUpUrl } from "~/models/google.server";
 import { requireUserId } from "~/models/user.server";
-import type {
-  YoutubeVideo} from "~/models/videos.server";
+import type { YoutubeVideo } from "~/models/videos.server";
 import {
   getCountOfConnectedYoutubeAccounts,
   getRecentlyUploadedVideoFromAccounts,
@@ -19,6 +18,8 @@ const ZVideoSchema = z.union([
     videoId: z.string(),
     thumbnailUrl: z.string(),
     title: z.string(),
+    width: z.number(),
+    height: z.number(),
   }),
   z.null(),
 ]);
@@ -40,6 +41,8 @@ const normalizeYoutubeVideo = (
   return {
     videoId: youtubeVideo.contentDetails.videoId,
     thumbnailUrl: youtubeVideo.snippet.thumbnails.medium.url,
+    width: youtubeVideo.snippet.thumbnails.medium.width,
+    height: youtubeVideo.snippet.thumbnails.medium.height,
     title: youtubeVideo.snippet.videoOwnerChannelTitle,
   };
 };
@@ -97,6 +100,10 @@ export default function RenderUserHomePage() {
             <img
               src={recentlyPublishedVideo.thumbnailUrl}
               alt="Recently published video thumbnail"
+              style={{
+                width: recentlyPublishedVideo.width,
+                height: recentlyPublishedVideo.height,
+              }}
             />
             <p>
               {`The video id is ${recentlyPublishedVideo.videoId} and title is ${recentlyPublishedVideo.title}`}
