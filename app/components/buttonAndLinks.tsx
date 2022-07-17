@@ -9,7 +9,7 @@ export const BigOutlineButton = ({
 }: BigOutlineButtonProps) => {
   return (
     <button
-      className="border-[3px] border-black px-14 py-2 rounded-md"
+      className="border-[3px] border-black px-14 py-2 rounded-md grid place-items-center"
       {...props}
     >
       {children}
@@ -20,7 +20,10 @@ export const BigOutlineButton = ({
 export type BigOutlineLinkProps = {} & AnchorHTMLAttributes<HTMLAnchorElement>;
 export const BigOutlineLink = ({ children, ...props }: BigOutlineLinkProps) => {
   return (
-    <a className="border-[3px] border-black px-14 py-2 rounded-md" {...props}>
+    <a
+      className="border-[3px] border-black px-14 py-2 rounded-md grid place-items-center"
+      {...props}
+    >
       {children}
     </a>
   );
