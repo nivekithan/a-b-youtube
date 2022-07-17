@@ -3,7 +3,7 @@ import { google } from "googleapis";
 import { z } from "zod";
 import { prisma } from "~/db.server";
 import { getGoogleOAuthClient } from "./google.server";
-import type { YoutubeVideo } from "./videos.server";
+import type { YoutubePlaylistItem } from "./videos.server";
 import { getRecentVideosFromAccount } from "./videos.server";
 
 export const getCountOfConnectedYoutubeAccounts = async (userId: string) => {
@@ -54,7 +54,7 @@ export const getChannelOfToken = async (token: string) => {
   }
 };
 
-export const getRecentlyUploadedVideoFromAccounts = async (
+export const getRecentlyUploadedPlaylistItem = async (
   ...youtubeAccounts: YoutubeAccount[]
 ) => {
   if (youtubeAccounts.length === 0) {
@@ -74,16 +74,32 @@ export const getRecentlyUploadedVideoFromAccounts = async (
   );
 
   const recentlyPublishedVideo = recentVideos.reduce(
-    (acc: YoutubeVideo[number] | null, currVideo) => {
-      if (acc === null || currVideo === null) {
-        return currVideo;
+    (
+      acc: null | {
+        playlistItem: YoutubePlaylistItem[number];
+        youtubeAccount: YoutubeAccount;
+      },
+      currVideo,
+      i
+    ): null | {
+      playlistItem: YoutubePlaylistItem[number];
+      youtubeAccount: YoutubeAccount;
+    } => {
+      if (currVideo === null) {
+        return acc;
       }
 
-      const accPublishedAt = new Date(acc.snippet.publishedAt).getTime();
+      if (acc === null) {
+        return { playlistItem: currVideo, youtubeAccount: youtubeAccounts[i] };
+      }
+
+      const { playlistItem: video } = acc;
+
+      const accPublishedAt = new Date(video.snippet.publishedAt).getTime();
       const currPublishedAt = new Date(currVideo.snippet.publishedAt).getTime();
 
       if (accPublishedAt < currPublishedAt) {
-        return currVideo;
+        return { playlistItem: currVideo, youtubeAccount: youtubeAccounts[i] };
       }
 
       return acc;

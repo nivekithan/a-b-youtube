@@ -26,7 +26,7 @@ const ZPlaylistItemsSchema = z.array(
   })
 );
 
-export type YoutubeVideo = z.infer<typeof ZPlaylistItemsSchema>;
+export type YoutubePlaylistItem = z.infer<typeof ZPlaylistItemsSchema>;
 
 export const getRecentVideosFromAccount = async (
   youtubeAccount: YoutubeAccount,
@@ -50,4 +50,32 @@ export const getRecentVideosFromAccount = async (
   const items = playlistItemRes.data.items;
 
   return ZPlaylistItemsSchema.parse(items);
+};
+
+const ZVideoSchema = z.object({ snippet: z.object({ title: z.string() }) });
+
+export type YoutubeVideo = z.infer<typeof ZVideoSchema>;
+
+export const getVideo = async (
+  youtubeAccount: YoutubeAccount,
+  videoId: string
+) => {
+  await ifNeededRefreshToken(youtubeAccount);
+  const googleAuthClient = getGoogleOAuthClient();
+  googleAuthClient.setCredentials({
+    access_token: youtubeAccount.oauthToken,
+  });
+
+  const videoRes = await google
+    .youtube("v3")
+    .videos.list({ id: [videoId], part: ["snippet"], auth: googleAuthClient });
+
+  const videoItems = videoRes.data.items;
+
+  if (videoItems === undefined || videoItems.length === 0)
+    throw new Error(`There is no video with id ${videoId}`);
+
+  const video = videoItems[0];
+
+  return ZVideoSchema.parse(video);
 };

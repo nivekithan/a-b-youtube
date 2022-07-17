@@ -6,10 +6,11 @@ import { BigOutlineLink } from "~/components/buttonAndLinks";
 import { prisma } from "~/db.server";
 import { generateGoogleSignUpUrl } from "~/models/google.server";
 import { requireUserId } from "~/models/user.server";
-import type { YoutubeVideo } from "~/models/videos.server";
+import type { YoutubePlaylistItem, YoutubeVideo } from "~/models/videos.server";
+import { getVideo } from "~/models/videos.server";
 import {
   getCountOfConnectedYoutubeAccounts,
-  getRecentlyUploadedVideoFromAccounts,
+  getRecentlyUploadedPlaylistItem,
 } from "~/models/youtubeAccount.server";
 import { encrypt, getEnvVar } from "~/server/utils.server";
 
@@ -17,9 +18,9 @@ const ZVideoSchema = z.union([
   z.object({
     videoId: z.string(),
     thumbnailUrl: z.string(),
-    title: z.string(),
     width: z.number(),
     height: z.number(),
+    videoTitle: z.string(),
   }),
   z.null(),
 ]);
@@ -34,16 +35,17 @@ type ClientVideo = z.infer<typeof ZVideoSchema>;
 type LoaderData = z.infer<typeof ZLoaderSchema>;
 
 const normalizeYoutubeVideo = (
-  youtubeVideo: YoutubeVideo[number] | null
+  playlistItem: YoutubePlaylistItem[number] | null,
+  video: YoutubeVideo | null
 ): ClientVideo => {
-  if (youtubeVideo === null) return null;
+  if (playlistItem === null || video === null) return null;
 
   return {
-    videoId: youtubeVideo.contentDetails.videoId,
-    thumbnailUrl: youtubeVideo.snippet.thumbnails.medium.url,
-    width: youtubeVideo.snippet.thumbnails.medium.width,
-    height: youtubeVideo.snippet.thumbnails.medium.height,
-    title: youtubeVideo.snippet.videoOwnerChannelTitle,
+    videoId: playlistItem.contentDetails.videoId,
+    thumbnailUrl: playlistItem.snippet.thumbnails.medium.url,
+    width: playlistItem.snippet.thumbnails.medium.width,
+    height: playlistItem.snippet.thumbnails.medium.height,
+    videoTitle: video.snippet.title,
   };
 };
 
@@ -64,11 +66,22 @@ export const loader: LoaderFunction = async ({ request }) => {
     take: 1,
   });
 
-  const recentlyUploadedVideo = await getRecentlyUploadedVideoFromAccounts(
+  const recentlyUploadedPlaylistItem = await getRecentlyUploadedPlaylistItem(
     ...youtubeAccounts
   );
 
-  const clientVideo = normalizeYoutubeVideo(recentlyUploadedVideo);
+  const video =
+    recentlyUploadedPlaylistItem === null
+      ? null
+      : await getVideo(
+          recentlyUploadedPlaylistItem.youtubeAccount,
+          recentlyUploadedPlaylistItem.playlistItem.contentDetails.videoId
+        );
+
+  const clientVideo = normalizeYoutubeVideo(
+    recentlyUploadedPlaylistItem?.playlistItem ?? null,
+    video
+  );
 
   return json<LoaderData>({
     connectedYoutubeAccountsCount: count,
@@ -106,7 +119,7 @@ export default function RenderUserHomePage() {
               }}
             />
             <p>
-              {`The video id is ${recentlyPublishedVideo.videoId} and title is ${recentlyPublishedVideo.title}`}
+              {`The video id is ${recentlyPublishedVideo.videoId} and title is ${recentlyPublishedVideo.videoTitle}`}
             </p>
           </div>
         );
