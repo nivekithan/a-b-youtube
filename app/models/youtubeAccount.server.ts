@@ -17,6 +17,9 @@ const ZYoutubeChannelSchema = z.object({
     title: z.string(),
     thumbnails: z.object({ medium: z.object({ url: z.string() }) }),
   }),
+  contentDetails: z.object({
+    relatedPlaylists: z.object({ uploads: z.string() }),
+  }),
 });
 
 export type YoutubeChannel = z.infer<typeof ZYoutubeChannelSchema>;
@@ -29,7 +32,7 @@ export const getChannelOfToken = async (token: string) => {
     const channelRes = await google.youtube("v3").channels.list({
       mine: true,
       auth: googleAuthClient,
-      part: ["id", "snippet"],
+      part: ["id", "snippet", "contentDetails"],
     });
     if (!channelRes.data.items || channelRes.data.items.length === 0)
       throw new Error(`No channel found for passed token`);

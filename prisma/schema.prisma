@@ -27,6 +27,8 @@ model YoutubeAccount {
   channelName               String @db.Text
   ChannelProfilePictureLink String @db.Text
   channelId                 String @db.Text
+  uploadsPlaylistId         String @db.Text
+
 
   userId String
 }

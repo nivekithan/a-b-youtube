@@ -32,7 +32,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const tokens = googleRes.tokens;
 
-  const { access_token, refresh_token} = tokens;
+  const { access_token, refresh_token } = tokens;
 
   if (!access_token || typeof access_token !== "string")
     return redirect("/404/access_token");
@@ -44,6 +44,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const channelId = channel.id;
   const channelPictureLink = channel.snippet.thumbnails.medium.url;
   const name = channel.snippet.title;
+  const uploadsPlaylistId = channel.contentDetails.relatedPlaylists.uploads;
 
   const mayBeConnectedAccount = await prisma.youtubeAccount.findFirst({
     where: { channelId: channelId, userId: userId },
@@ -57,6 +58,7 @@ export const loader: LoaderFunction = async ({ request }) => {
         ChannelProfilePictureLink: channelPictureLink,
         oauthToken: access_token,
         refreshToken: refresh_token ?? undefined,
+        uploadsPlaylistId: uploadsPlaylistId,
       },
     });
   } else {
@@ -71,10 +73,10 @@ export const loader: LoaderFunction = async ({ request }) => {
         oauthToken: access_token,
         refreshToken: refresh_token,
         user: { connect: { userId: userId } },
+        uploadsPlaylistId: uploadsPlaylistId,
       },
     });
   }
-
 
   return redirect(`/user/${userId}`);
 };

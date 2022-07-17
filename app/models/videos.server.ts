@@ -1,6 +1,7 @@
+import { YoutubeAccount } from "@prisma/client";
 
-export type TVideo = {
-  videoId: string;
-  title: string;
-  thumbnailUrl: URL;
+export const getRecentVideosFromAccount = async (
+  youtubeAccount: YoutubeAccount
+) => {
+  
 };
