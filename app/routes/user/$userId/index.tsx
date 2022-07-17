@@ -2,8 +2,10 @@ import { useLoaderData } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { z } from "zod";
+import { prisma } from "~/db.server";
 import { generateGoogleSignUpUrl } from "~/models/google.server";
 import { requireUserId } from "~/models/user.server";
+import { getRecentVideosFromAccount } from "~/models/videos.server";
 import { getCountOfConnectedYoutubeAccounts } from "~/models/youtubeAccount.server";
 import { encrypt, getEnvVar } from "~/server/utils.server";
 
@@ -25,6 +27,17 @@ export const loader: LoaderFunction = async ({ request }) => {
     state: encryptedUserId,
     redirectUrl: `${getEnvVar("GOOGLE_API_REDIRECT_URI")}/youtube`,
   });
+
+  const youtubeAccounts = await prisma.youtubeAccount.findMany({
+    where: { userId: userId },
+    take: 3,
+  });
+
+  const recentVideos = await Promise.all(
+    youtubeAccounts.map(async (account) => {
+      return getRecentVideosFromAccount(account);
+    })
+  );
 
   return json<LoaderData>({
     connectedYoutubeAccountsCount: count,

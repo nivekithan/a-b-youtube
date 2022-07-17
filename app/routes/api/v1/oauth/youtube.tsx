@@ -32,7 +32,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const tokens = googleRes.tokens;
 
-  const { access_token, refresh_token } = tokens;
+  const { access_token, refresh_token, expiry_date } = tokens;
+
+  if (!expiry_date || typeof expiry_date !== "number")
+    return redirect("/404/no-expiry-date");
 
   if (!access_token || typeof access_token !== "string")
     return redirect("/404/access_token");
@@ -59,6 +62,7 @@ export const loader: LoaderFunction = async ({ request }) => {
         oauthToken: access_token,
         refreshToken: refresh_token ?? undefined,
         uploadsPlaylistId: uploadsPlaylistId,
+        expiresIn: new Date(expiry_date),
       },
     });
   } else {
@@ -74,6 +78,7 @@ export const loader: LoaderFunction = async ({ request }) => {
         refreshToken: refresh_token,
         user: { connect: { userId: userId } },
         uploadsPlaylistId: uploadsPlaylistId,
+        expiresIn: new Date(expiry_date),
       },
     });
   }

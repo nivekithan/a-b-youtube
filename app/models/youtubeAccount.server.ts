@@ -1,3 +1,4 @@
+import type { YoutubeAccount } from "@prisma/client";
 import { google } from "googleapis";
 import { z } from "zod";
 import { prisma } from "~/db.server";
@@ -48,5 +49,45 @@ export const getChannelOfToken = async (token: string) => {
     }
 
     throw err;
+  }
+};
+
+export const ifNeededRefreshToken = async (account: YoutubeAccount) => {
+  const oauthTokenExpiresIn = account.expiresIn;
+
+  const expiresAtInMs = oauthTokenExpiresIn.getTime();
+
+  const currentTimeInMs = new Date().getTime();
+
+  const twoMinutes = 1000 * 60 * 2;
+
+  if (expiresAtInMs <= currentTimeInMs + twoMinutes) {
+
+    const googleAuthClient = getGoogleOAuthClient();
+    googleAuthClient.setCredentials({
+      access_token: account.oauthToken,
+      refresh_token: account.refreshToken,
+    });
+
+    const newTokenRes = await googleAuthClient.refreshAccessToken();
+
+    const newOauthToken = newTokenRes.credentials.access_token;
+
+    const newExpiresAt = newTokenRes.credentials.expiry_date;
+
+    if (!newOauthToken || typeof newOauthToken !== "string")
+      throw new Error(`No new oauth token found while refreshing access token`);
+
+    if (!newExpiresAt || typeof newExpiresAt !== "number")
+      throw new Error(`No new expiresAt found while refreshing access token`);
+
+    await prisma.youtubeAccount.update({
+      where: { accountId: account.accountId },
+      data: { oauthToken: newOauthToken, expiresIn: new Date(newExpiresAt) },
+    });
+
+    account.oauthToken = newOauthToken;
+    account.expiresIn = new Date(newExpiresAt);
+
   }
 };
