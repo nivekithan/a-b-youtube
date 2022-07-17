@@ -1,11 +1,13 @@
 import { google } from "googleapis";
 import { getEnvVar } from "~/server/utils.server";
 
-export const getGoogleOAuthClient = () => {
+export const getGoogleOAuthClient = ({
+  redirectUrl,
+}: { redirectUrl?: string } = {}) => {
   const googleOAuthClient = new google.auth.OAuth2(
     getEnvVar("GOOGLE_API_CLIENT_ID"),
     getEnvVar("GOOGLE_API_CLIENT_SECRET"),
-    getEnvVar("GOOGLE_API_REDIRECT_URI")
+    redirectUrl ?? getEnvVar("GOOGLE_API_REDIRECT_URI")
   );
 
   return googleOAuthClient;

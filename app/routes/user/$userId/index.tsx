@@ -5,9 +5,10 @@ import { z } from "zod";
 import { generateGoogleSignUpUrl } from "~/models/google.server";
 import { requireUserId } from "~/models/user.server";
 import { getCountOfConnectedYoutubeAccounts } from "~/models/youtubeAccount.server";
+import { encrypt, getEnvVar } from "~/server/utils.server";
 
 const ZLoaderSchema = z.object({
-  connectedYoutubeAccounts: z.number(),
+  connectedYoutubeAccountsCount: z.number(),
   googleAuthUrl: z.string(),
 });
 
@@ -17,10 +18,16 @@ export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request, "/");
   const count = await getCountOfConnectedYoutubeAccounts(userId);
 
-  const googleAuthUrl = generateGoogleSignUpUrl({ scopes: { youtube: true } });
+  const encryptedUserId = encrypt(userId);
+
+  const googleAuthUrl = generateGoogleSignUpUrl({
+    scopes: { youtube: true },
+    state: encryptedUserId,
+    redirectUrl: `${getEnvVar("GOOGLE_API_REDIRECT_URI")}/youtube`,
+  });
 
   return json<LoaderData>({
-    connectedYoutubeAccounts: count,
+    connectedYoutubeAccountsCount: count,
     googleAuthUrl: googleAuthUrl,
   });
 };
@@ -35,6 +42,7 @@ export default function RenderUserHomePage() {
 
   return (
     <div className="h-screen w-full grid place-items-center">
+      {`Number of connected Accounts ${loaderData.connectedYoutubeAccountsCount}`}
       <a
         className="border-[3px] border-black px-14 py-2 rounded-md"
         href={loaderData.googleAuthUrl}

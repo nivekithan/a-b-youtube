@@ -21,12 +21,12 @@ model User {
 model YoutubeAccount {
   accountId Int @id @unique @default(autoincrement())
 
-  user User @relation(fields: [userId], references: [userId])
-  oauthToken String @db.Text
-  refreshToken String @db.Text
-  channelName String  @db.Text
+  user                      User   @relation(fields: [userId], references: [userId])
+  oauthToken                String @db.Text
+  refreshToken              String @db.Text
+  channelName               String @db.Text
   ChannelProfilePictureLink String @db.Text
-  
+  channelId                 String @db.Text
 
-  userId String 
+  userId String
 }

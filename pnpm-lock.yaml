@@ -15,7 +15,6 @@ specifiers:
   '@testing-library/jest-dom': ^5.16.4
   '@testing-library/react': ^12.1.5
   '@testing-library/user-event': ^14.2.0
-  '@types/bcryptjs': ^2.4.2
   '@types/eslint': ^8.4.3
   '@types/node': ^17.0.41
   '@types/react': ^17.0.45
@@ -30,7 +29,6 @@ specifiers:
   eslint-config-prettier: ^8.5.0
   googleapis: ^105.0.0
   happy-dom: ^5.2.0
-  hashids: ^2.2.10
   jwt-decode: ^3.1.2
   msw: ^0.42.1
   nanoid: ^4.0.0
@@ -41,6 +39,7 @@ specifiers:
   prisma: ^4.0.0
   react: ^17.0.2
   react-dom: ^17.0.2
+  simple-crypto-js: ^3.0.1
   start-server-and-test: ^1.14.0
   tailwindcss: ^3.1.0
   tiny-invariant: ^1.2.0
@@ -60,11 +59,11 @@ dependencies:
   '@remix-run/serve': 1.6.4_react-dom@17.0.2+react@17.0.2
   '@remix-run/server-runtime': 1.6.4_react-dom@17.0.2+react@17.0.2
   googleapis: 105.0.0
-  hashids: 2.2.10
   jwt-decode: 3.1.2
   nanoid: 4.0.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
+  simple-crypto-js: 3.0.1
   tiny-invariant: 1.2.0
   zod: 3.17.3
 
@@ -77,7 +76,6 @@ devDependencies:
   '@testing-library/jest-dom': 5.16.4
   '@testing-library/react': 12.1.5_react-dom@17.0.2+react@17.0.2
   '@testing-library/user-event': 14.2.1_@testing-library+dom@8.14.1
-  '@types/bcryptjs': 2.4.2
   '@types/eslint': 8.4.5
   '@types/node': 17.0.45
   '@types/react': 17.0.47
@@ -2357,10 +2355,6 @@ packages:
     resolution: {integrity: sha512-HnYpAE1Y6kRyKM/XkEuiRQhTHvkzMBurTHnpFLYLBGPIylZNPs9jJcuOOYWxPLJCSEtmZT0Y8rHDokKN7rRTig==}
     dev: true
 
-  /@types/bcryptjs/2.4.2:
-    resolution: {integrity: sha512-LiMQ6EOPob/4yUL66SZzu6Yh77cbzJFYll+ZfaPiPPFswtIlA/Fs1MzdKYA7JApHU49zQTbJGX3PDmCpIdDBRQ==}
-    dev: true
-
   /@types/cacheable-request/6.0.2:
     resolution: {integrity: sha512-B3xVo+dlKM6nnKTcmm5ZtY/OL8bOAOd2Olee9M1zft65ox50OzjEHW91sDiU9j6cvW8Ejg1/Qkf4xd2kugApUA==}
     dependencies:
@@ -3784,6 +3778,10 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
+
+  /crypto-js/4.1.1:
+    resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
+    dev: false
 
   /css.escape/1.5.1:
     resolution: {integrity: sha512-YUifsXXuknHlUsmlgyY0PKzgPOr7/FjCePfHNt0jxm83wHZi44VDMQ7/fGNkjY3/jV1MC+1CmZbaHzugyeRtpg==}
@@ -5908,10 +5906,6 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
-
-  /hashids/2.2.10:
-    resolution: {integrity: sha512-nXnYums7F8B5Y+GSThutLPlKMaamW1yjWNZVt0WModiJfdjaDZHnhYTWblS+h1OoBx3yjwiBwxldPP3nIbFSSA==}
-    dev: false
 
   /hast-util-to-estree/2.0.2:
     resolution: {integrity: sha512-UQrZVeBj6A9od0lpFvqHKNSH9zvDrNoyWKbveu1a2oSCXEDUI+3bnd6BoiQLPnLrcXXn/jzJ6y9hmJTTlvf8lQ==}
@@ -8912,6 +8906,12 @@ packages:
   /signal-exit/3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
     dev: true
+
+  /simple-crypto-js/3.0.1:
+    resolution: {integrity: sha512-dKhe6jT0WETtXX6NQn9GUTyD6Fp5F9X0ZcUI4XEqZ9dvt4/2h5QxkIl2d+2jH9SXrTBu9m7EsxC8CRaIS8i/dQ==}
+    dependencies:
+      crypto-js: 4.1.1
+    dev: false
 
   /slash/3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
