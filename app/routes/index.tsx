@@ -19,7 +19,9 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect(`/user/${userId}`);
   }
 
-  const googleAuthVerifyUrl = generateGoogleSignUpUrl({ profile: true });
+  const googleAuthVerifyUrl = generateGoogleSignUpUrl({
+    scopes: { profile: true },
+  });
   return json<LoaderData>({ googleAuthUrl: googleAuthVerifyUrl });
 };
 

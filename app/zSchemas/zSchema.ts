@@ -7,3 +7,4 @@ export const ZClientUserSchema = z.object({
 });
 
 export type ClientUser = z.infer<typeof ZClientUserSchema>;
+

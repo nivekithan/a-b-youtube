@@ -24,6 +24,8 @@ model YoutubeAccount {
   user User @relation(fields: [userId], references: [userId])
   oauthToken String @db.Text
   refreshToken String @db.Text
+  channelName String  @db.Text
+  ChannelProfilePictureLink String @db.Text
   
 
   userId String 

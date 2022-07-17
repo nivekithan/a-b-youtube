@@ -36,7 +36,7 @@ export default function RenderUserPage() {
   return (
     <div className="flex">
       <div className="h-screen sticky top-0 border-r-2 ">
-        <div className="p-2">
+        <div className="p-2 min-w-[300px]">
           <UserCard clientUser={loaderData.clientUser} />
         </div>
       </div>

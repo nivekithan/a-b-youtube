@@ -12,36 +12,42 @@ export const getGoogleOAuthClient = () => {
 };
 
 export type GenerateGoogleSignUpUrlProps = {
-  youtube?: boolean;
-  profile?: boolean;
+  scopes: {
+    youtube?: boolean;
+    profile?: boolean;
+  };
+  state?: string;
+  redirectUrl?: string;
 };
 
 /**
  * Generates a url through which users can authenticate their
  * google account
  */
-export const generateGoogleSignUpUrl = ({
-  youtube,
-  profile,
-}: GenerateGoogleSignUpUrlProps = {}) => {
+export const generateGoogleSignUpUrl = (
+  { scopes, redirectUrl, state }: GenerateGoogleSignUpUrlProps = { scopes: {} }
+) => {
   const googleOAuthClient = getGoogleOAuthClient();
-  const scopes = [];
+  const { profile = false, youtube = false } = scopes;
+  const scopesUrl = [];
 
   if (youtube) {
-    scopes.push(
+    scopesUrl.push(
       "https://www.googleapis.com/auth/youtube.readonly",
       "https://www.googleapis.com/auth/youtube.upload"
     );
   }
 
   if (profile) {
-    scopes.push("openid email profile");
+    scopesUrl.push("openid email profile");
   }
 
   const authorizationUrl = googleOAuthClient.generateAuthUrl({
     access_type: "offline",
-    scope: scopes,
+    scope: scopesUrl,
     include_granted_scopes: true,
+    redirect_uri: redirectUrl ?? undefined,
+    state: state ?? undefined,
   });
 
   return authorizationUrl;

@@ -31,6 +31,7 @@ specifiers:
   eslint-config-prettier: ^8.5.0
   googleapis: ^105.0.0
   happy-dom: ^5.2.0
+  hashids: ^2.2.10
   jwt-decode: ^3.1.2
   msw: ^0.42.1
   nanoid: ^4.0.0
@@ -61,6 +62,7 @@ dependencies:
   '@remix-run/server-runtime': 1.6.4_react-dom@17.0.2+react@17.0.2
   bcryptjs: 2.4.3
   googleapis: 105.0.0
+  hashids: 2.2.10
   jwt-decode: 3.1.2
   nanoid: 4.0.0
   react: 17.0.2
@@ -5912,6 +5914,10 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
+
+  /hashids/2.2.10:
+    resolution: {integrity: sha512-nXnYums7F8B5Y+GSThutLPlKMaamW1yjWNZVt0WModiJfdjaDZHnhYTWblS+h1OoBx3yjwiBwxldPP3nIbFSSA==}
+    dev: false
 
   /hast-util-to-estree/2.0.2:
     resolution: {integrity: sha512-UQrZVeBj6A9od0lpFvqHKNSH9zvDrNoyWKbveu1a2oSCXEDUI+3bnd6BoiQLPnLrcXXn/jzJ6y9hmJTTlvf8lQ==}
