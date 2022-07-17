@@ -5,6 +5,7 @@ import { generateGoogleSignUpUrl } from "~/models/google.server";
 import { getUserId } from "~/models/user.server";
 import { z } from "zod";
 import { useLoaderData } from "@remix-run/react";
+import { BigOutlineLink } from "~/components/buttonAndLinks";
 
 const ZLoaderSchema = z.object({ googleAuthUrl: z.string() });
 
@@ -35,12 +36,9 @@ export default function RenderHomePage() {
 
   return (
     <div className="h-screen w-screen grid place-items-center">
-      <a
-        href={loaderData.googleAuthUrl}
-        className="border-[3px] border-black font-bold px-14 rounded-md py-2 "
-      >
+      <BigOutlineLink href={loaderData.googleAuthUrl}>
         Connect through Google
-      </a>
+      </BigOutlineLink>
     </div>
   );
 }
