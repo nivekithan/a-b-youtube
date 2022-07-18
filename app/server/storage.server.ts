@@ -1,9 +1,10 @@
 import { nanoid } from "nanoid";
-import type { Readable } from "stream";
+import { Readable } from "stream";
 import { Writable } from "node:stream";
 import { createWriteStream, rm } from "node:fs";
 import path from "path";
 import { createReadStream } from "fs";
+import { writeAsyncIterableToWritable } from "@remix-run/node";
 
 class SizeLimitedWritable extends Writable {
   limit = 2097152;
@@ -34,29 +35,17 @@ class SizeLimitedWritable extends Writable {
   }
 }
 
-export const storeFile = async (fileData: Readable) => {
-  const fileName = nanoid();
-  const filePath = path.join(__dirname, "..", "..", "storage", fileName);
+export const storeFile = async (fileData: AsyncIterable<Uint8Array>) => {
+  const fileId = nanoid();
+  const filePath = path.join(__dirname, "..", "storage", fileId);
   const fileWritableStream = createWriteStream(filePath);
 
   const sizeLimitedStream = new SizeLimitedWritable(fileWritableStream);
-
-  return new Promise<string>((resolve, reject) => {
-    fileData.pipe(sizeLimitedStream);
-
-    fileWritableStream.on("finish", () => {
-      resolve(fileName);
-    });
-
-    fileWritableStream.on("error", (err) => {
-      rm(filePath, () => {
-        reject(err);
-      });
-    });
-  });
+  await writeAsyncIterableToWritable(fileData, sizeLimitedStream);
+  return fileId;
 };
 
 export const getFileStream = (fileId: string) => {
-  const filePath = path.join(__dirname, "..", "..", "storage", fileId);
+  const filePath = path.join(__dirname, "..", "storage", fileId);
   return createReadStream(filePath);
 };

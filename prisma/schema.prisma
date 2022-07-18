@@ -16,6 +16,7 @@ model User {
   googleSub       String           @unique @db.VarChar(255)
   pictureUrl      String           @db.Text
   youtubeAccounts YoutubeAccount[]
+  thumbnails thumbnailsDev[]
 }
 
 model YoutubeAccount {
@@ -29,6 +30,15 @@ model YoutubeAccount {
   channelId                 String   @db.Text
   uploadsPlaylistId         String   @db.Text
   expiresIn                 DateTime
+
+  userId String
+}
+
+
+model thumbnailsDev {
+  fileId String @id @unique
+  user User @relation(fields : [userId], references: [userId])
+  mimeType String
 
   userId String
 }

@@ -1,5 +1,9 @@
-import { useLoaderData } from "@remix-run/react";
-import type { LoaderFunction } from "@remix-run/server-runtime";
+import { Form, useLoaderData } from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
+import {
+  unstable_composeUploadHandlers,
+  unstable_parseMultipartFormData,
+} from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { z } from "zod";
 import { BigOutlineLink } from "~/components/buttonAndLinks";
@@ -12,7 +16,8 @@ import {
   getCountOfConnectedYoutubeAccounts,
   getRecentlyUploadedPlaylistItem,
 } from "~/models/youtubeAccount.server";
-import { encrypt, getEnvVar } from "~/server/utils.server";
+import { storeFile } from "~/server/storage.server";
+import { badRequest, encrypt, getEnvVar } from "~/server/utils.server";
 
 const ZVideoSchema = z.union([
   z.object({
@@ -90,6 +95,58 @@ export const loader: LoaderFunction = async ({ request }) => {
   });
 };
 
+export const action: ActionFunction = async ({ request }) => {
+  const userId = await requireUserId(request, "/");
+
+  const fileUploadHandler = unstable_composeUploadHandlers(
+    async ({ contentType, data, name }) => {
+      if (name !== "thumbnails") {
+        return undefined;
+      }
+
+      const fileId = await storeFile(data);
+
+      return JSON.stringify({ id: fileId, contentType: contentType });
+    }
+  );
+
+  const formData = await unstable_parseMultipartFormData(
+    request,
+    fileUploadHandler
+  );
+
+  const stringifiedThumbnails = formData.getAll("thumbnails");
+
+  const parsedThumbnails = stringifiedThumbnails.map((thumbnailInStr) => {
+    if (!thumbnailInStr || typeof thumbnailInStr !== "string") {
+      throw badRequest("Thumbnails is required");
+    }
+
+    const ZThumbnailSchema = z.object({
+      id: z.string(),
+      contentType: z.string(),
+    });
+
+    const thumbnails = ZThumbnailSchema.parse(JSON.parse(thumbnailInStr));
+
+    return thumbnails;
+  });
+
+
+  await prisma.thumbnailsDev.createMany({
+    data: parsedThumbnails.map((thumbnail) => {
+      return {
+        fileId: thumbnail.id,
+        mimeType: thumbnail.contentType,
+
+        userId: userId,
+      };
+    }),
+  });
+
+  return json({ okay: "okay" });
+};
+
 const useZLoaderData = (): LoaderData => {
   const loaderData = useLoaderData();
   return ZLoaderSchema.parse(loaderData);
@@ -110,7 +167,7 @@ export default function RenderUserHomePage() {
         const recentlyPublishedVideo = loaderData.recentlyPublishedVideo;
         return (
           <div className="flex flex-col gap-y-6">
-            <img
+            {/* <img
               src={recentlyPublishedVideo.thumbnailUrl}
               alt="Recently published video thumbnail"
               style={{
@@ -120,7 +177,18 @@ export default function RenderUserHomePage() {
             />
             <p>
               {`The video id is ${recentlyPublishedVideo.videoId} and title is ${recentlyPublishedVideo.videoTitle}`}
-            </p>
+
+            </p> */}
+
+            <Form method="post" encType="multipart/form-data">
+              <input
+                name="thumbnails"
+                type="file"
+                multiple
+                accept="image/jpeg"
+              />
+              <button type="submit">Submit thumbnails</button>
+            </Form>
           </div>
         );
       })()}
