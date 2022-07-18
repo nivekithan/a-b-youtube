@@ -4,9 +4,9 @@ import jwtDecode from "jwt-decode";
 import { prisma } from "~/db.server";
 import { getGoogleOAuthClient } from "~/models/google.server";
 import { createUserSession } from "~/server/session.server";
+import { nanoid } from "nanoid";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const { nanoid } = await import("nanoid");
   const url = new URL(request.url);
   const urlParams = url.searchParams;
 
@@ -65,5 +65,4 @@ export const loader: LoaderFunction = async ({ request }) => {
     const redirectRes = await createUserSession(userId, "/");
     return redirectRes;
   }
-
 };
