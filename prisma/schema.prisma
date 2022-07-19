@@ -16,29 +16,51 @@ model User {
   googleSub       String           @unique @db.VarChar(255)
   pictureUrl      String           @db.Text
   youtubeAccounts YoutubeAccount[]
-  thumbnails thumbnailsDev[]
+  thumbnails      Thumbnails[]
+  Jobs            ThumbnailJob[]
 }
 
 model YoutubeAccount {
   accountId Int @id @unique @default(autoincrement())
 
-  user                      User     @relation(fields: [userId], references: [userId])
-  oauthToken                String   @db.Text
-  refreshToken              String   @db.Text
-  channelName               String   @db.Text
-  ChannelProfilePictureLink String   @db.Text
-  channelId                 String   @db.Text
-  uploadsPlaylistId         String   @db.Text
+  user                      User           @relation(fields: [userId], references: [userId])
+  oauthToken                String         @db.Text
+  refreshToken              String         @db.Text
+  channelName               String         @db.Text
+  ChannelProfilePictureLink String         @db.Text
+  channelId                 String
+  uploadsPlaylistId         String         @db.Text
   expiresIn                 DateTime
+  jobs                      ThumbnailJob[]
+
 
   userId String
+
+  @@unique([userId, channelId])
 }
 
+model ThumbnailJob {
+  jobId Int @id @unique @default(autoincrement())
 
-model thumbnailsDev {
+  user           User           @relation(fields: [userId], references: [userId])
+  youtubeAccount YoutubeAccount @relation(fields: [accountId], references: [accountId])
+  thumbnails     Thumbnails[]
+  testDays       Int
+  currentDay     Int            @default(0)
+  videoId        String // Youtube video id
+
+  userId    String
+  accountId Int
+  @@unique([userId, videoId])
+}
+
+model Thumbnails {
   fileId String @id @unique
-  user User @relation(fields : [userId], references: [userId])
-  mimeType String
 
+  user    User         @relation(fields: [userId], references: [userId])
+  job     ThumbnailJob @relation(fields: [jobId], references: [jobId])
+  videoId String // yotube video id
+
+  jobId  Int
   userId String
 }

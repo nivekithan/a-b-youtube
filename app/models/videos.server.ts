@@ -52,7 +52,9 @@ export const getRecentVideosFromAccount = async (
   return ZPlaylistItemsSchema.parse(items);
 };
 
-const ZVideoSchema = z.object({ snippet: z.object({ title: z.string() }) });
+const ZVideoSchema = z.object({
+  snippet: z.object({ title: z.string(), channelId: z.string() }),
+});
 
 export type YoutubeVideo = z.infer<typeof ZVideoSchema>;
 

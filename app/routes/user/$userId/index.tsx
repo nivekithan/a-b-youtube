@@ -1,5 +1,10 @@
 import { Form, useLoaderData } from "@remix-run/react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
+import type {
+  ActionFunction,
+  LoaderFunction} from "@remix-run/server-runtime";
+import {
+  unstable_createMemoryUploadHandler,
+} from "@remix-run/server-runtime";
 import {
   unstable_composeUploadHandlers,
   unstable_parseMultipartFormData,
@@ -26,6 +31,7 @@ const ZVideoSchema = z.union([
     width: z.number(),
     height: z.number(),
     videoTitle: z.string(),
+    channelId: z.string(),
   }),
   z.null(),
 ]);
@@ -48,6 +54,7 @@ const normalizeYoutubeVideo = (
   return {
     videoId: playlistItem.contentDetails.videoId,
     thumbnailUrl: playlistItem.snippet.thumbnails.medium.url,
+    channelId: video.snippet.channelId,
     width: playlistItem.snippet.thumbnails.medium.width,
     height: playlistItem.snippet.thumbnails.medium.height,
     videoTitle: video.snippet.title,
@@ -95,6 +102,10 @@ export const loader: LoaderFunction = async ({ request }) => {
   });
 };
 
+const validActionType = {
+  addTest: "addTest",
+};
+
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request, "/");
 
@@ -107,7 +118,8 @@ export const action: ActionFunction = async ({ request }) => {
       const fileId = await storeFile(data);
 
       return JSON.stringify({ id: fileId, contentType: contentType });
-    }
+    },
+    unstable_createMemoryUploadHandler()
   );
 
   const formData = await unstable_parseMultipartFormData(
@@ -115,34 +127,82 @@ export const action: ActionFunction = async ({ request }) => {
     fileUploadHandler
   );
 
-  const stringifiedThumbnails = formData.getAll("thumbnails");
+  const actionType = formData.get("actionType");
 
-  const parsedThumbnails = stringifiedThumbnails.map((thumbnailInStr) => {
-    if (!thumbnailInStr || typeof thumbnailInStr !== "string") {
-      throw badRequest("Thumbnails is required");
-    }
+  if (!actionType || typeof actionType !== "string") {
+    return badRequest("Action type is required");
+  }
 
-    const ZThumbnailSchema = z.object({
-      id: z.string(),
-      contentType: z.string(),
+  if (!Object.keys(validActionType).includes(actionType)) {
+    return badRequest("Invalid action type");
+  }
+
+  if (actionType === validActionType.addTest) {
+    const stringifiedThumbnails = formData.getAll("thumbnails");
+
+    const parsedThumbnails = stringifiedThumbnails.map((thumbnailInStr) => {
+      if (!thumbnailInStr || typeof thumbnailInStr !== "string") {
+        throw badRequest("Thumbnails is required");
+      }
+
+      const ZThumbnailSchema = z.object({
+        id: z.string(),
+        contentType: z.string(),
+      });
+
+      const thumbnails = ZThumbnailSchema.parse(JSON.parse(thumbnailInStr));
+
+      return thumbnails;
     });
 
-    const thumbnails = ZThumbnailSchema.parse(JSON.parse(thumbnailInStr));
+    if (parsedThumbnails.length <= 0) {
+      return badRequest("Thumbnails is required");
+    }
 
-    return thumbnails;
-  });
+    const videoId = formData.get("videoId");
 
+    if (!videoId || typeof videoId !== "string") {
+      return badRequest("Video id is required");
+    }
 
-  await prisma.thumbnailsDev.createMany({
-    data: parsedThumbnails.map((thumbnail) => {
-      return {
-        fileId: thumbnail.id,
-        mimeType: thumbnail.contentType,
+    const testDaysInStr = formData.get("testDays");
 
-        userId: userId,
-      };
-    }),
-  });
+    if (!testDaysInStr || typeof testDaysInStr !== "string") {
+      return badRequest("Test days is required");
+    }
+    const testDays = parseInt(testDaysInStr, 10);
+
+    const channelId = formData.get("channelId");
+
+    if (!channelId || typeof channelId !== "string") {
+      return badRequest("Channel id is required");
+    }
+
+    await prisma.thumbnailJob.create({
+      data: {
+        videoId: videoId,
+        testDays: testDays,
+        currentDay: 0,
+        youtubeAccount: {
+          connect: {
+            userId_channelId: { userId: userId, channelId: channelId },
+          },
+        },
+        user: { connect: { userId: userId } },
+        thumbnails: {
+          createMany: {
+            data: parsedThumbnails.map((thumbnail) => {
+              return {
+                fileId: thumbnail.id,
+                videoId: videoId,
+                userId: userId,
+              };
+            }),
+          },
+        },
+      },
+    });
+  }
 
   return json({ okay: "okay" });
 };
@@ -167,7 +227,7 @@ export default function RenderUserHomePage() {
         const recentlyPublishedVideo = loaderData.recentlyPublishedVideo;
         return (
           <div className="flex flex-col gap-y-6">
-            {/* <img
+            <img
               src={recentlyPublishedVideo.thumbnailUrl}
               alt="Recently published video thumbnail"
               style={{
@@ -177,17 +237,53 @@ export default function RenderUserHomePage() {
             />
             <p>
               {`The video id is ${recentlyPublishedVideo.videoId} and title is ${recentlyPublishedVideo.videoTitle}`}
+            </p>
 
-            </p> */}
-
-            <Form method="post" encType="multipart/form-data">
+            <Form
+              method="post"
+              encType="multipart/form-data"
+              className="flex flex-col gap-y-3"
+            >
               <input
+                name="videoId"
+                hidden
+                value={recentlyPublishedVideo.videoId}
+                readOnly
+              />
+              <input
+                name="channelId"
+                hidden
+                value={recentlyPublishedVideo.channelId}
+                readOnly
+              />
+              <label htmlFor="testDays">
+                Number of days you want this test to happen
+              </label>
+              <input
+                id="testDays"
+                name="testDays"
+                type="number"
+                className="border-[3px] border-black max-w-[30%] rounded-md px-3 py-2"
+              />
+              <label htmlFor="thumbnails">Thumbanils for test</label>
+              <input
+                id="thumbnails"
                 name="thumbnails"
                 type="file"
                 multiple
                 accept="image/jpeg"
+                className="border-[3px] border-blue-400 rounded-md max-w-[30%] px-3 py-2"
               />
-              <button type="submit">Submit thumbnails</button>
+              <div>
+                <button
+                  type="submit"
+                  className="px-3 py-2 text-white bg-gray-700 rounded-md"
+                  name="actionType"
+                  value={validActionType.addTest}
+                >
+                  Submit thumbnails
+                </button>
+              </div>
             </Form>
           </div>
         );
