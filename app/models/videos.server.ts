@@ -1,6 +1,8 @@
-import type { YoutubeAccount } from "@prisma/client";
+import type { ThumbnailJob, Thumbnails, YoutubeAccount } from "@prisma/client";
 import { google } from "googleapis";
 import { z } from "zod";
+import { prisma } from "~/db.server";
+import { getFileStream } from "~/server/storage.server";
 import { getGoogleOAuthClient } from "./google.server";
 import { ifNeededRefreshToken } from "./youtubeAccount.server";
 
@@ -80,4 +82,41 @@ export const getVideo = async (
   const video = videoItems[0];
 
   return ZVideoSchema.parse(video);
+};
+
+export type ChangeThumbnailArgs = {
+  account: YoutubeAccount;
+  thumbnail: Thumbnails;
+  thumbnailJob: ThumbnailJob;
+};
+export const changeThumbnail = async ({
+  account,
+  thumbnail,
+  thumbnailJob,
+}: ChangeThumbnailArgs) => {
+  try {
+    await ifNeededRefreshToken(account);
+
+    const videoId = thumbnailJob.videoId;
+
+    const googleAuthClient = getGoogleOAuthClient();
+    googleAuthClient.setCredentials({ access_token: account.oauthToken });
+
+    const thumbnailStream = getFileStream(thumbnail.fileId);
+
+    await google.youtube("v3").thumbnails.set({
+      auth: googleAuthClient,
+      videoId: videoId,
+      uploadType: thumbnail.contentType,
+      media: { mimeType: thumbnail.contentType, body: thumbnailStream },
+    });
+
+    await prisma.thumbnailJob.update({
+      where: { jobId: thumbnailJob.jobId },
+      data: { currentDay: { increment: 1 } },
+    });
+  } catch (err) {
+    console.log(`Something has gone wrong`);
+    console.log(err);
+  }
 };

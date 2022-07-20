@@ -1,10 +1,6 @@
 import { Form, useLoaderData } from "@remix-run/react";
-import type {
-  ActionFunction,
-  LoaderFunction} from "@remix-run/server-runtime";
-import {
-  unstable_createMemoryUploadHandler,
-} from "@remix-run/server-runtime";
+import type { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
+import { unstable_createMemoryUploadHandler } from "@remix-run/server-runtime";
 import {
   unstable_composeUploadHandlers,
   unstable_parseMultipartFormData,
@@ -21,6 +17,7 @@ import {
   getCountOfConnectedYoutubeAccounts,
   getRecentlyUploadedPlaylistItem,
 } from "~/models/youtubeAccount.server";
+import { ThumbnailQueue } from "~/server/bull.server";
 import { storeFile } from "~/server/storage.server";
 import { badRequest, encrypt, getEnvVar } from "~/server/utils.server";
 
@@ -50,7 +47,6 @@ const normalizeYoutubeVideo = (
   video: YoutubeVideo | null
 ): ClientVideo => {
   if (playlistItem === null || video === null) return null;
-
   return {
     videoId: playlistItem.contentDetails.videoId,
     thumbnailUrl: playlistItem.snippet.thumbnails.medium.url,
@@ -178,7 +174,7 @@ export const action: ActionFunction = async ({ request }) => {
       return badRequest("Channel id is required");
     }
 
-    await prisma.thumbnailJob.create({
+    const thumbnailJob = await prisma.thumbnailJob.create({
       data: {
         videoId: videoId,
         testDays: testDays,
@@ -196,12 +192,16 @@ export const action: ActionFunction = async ({ request }) => {
                 fileId: thumbnail.id,
                 videoId: videoId,
                 userId: userId,
+                contentType: thumbnail.contentType,
               };
             }),
           },
         },
       },
     });
+
+    const id = thumbnailJob.jobId;
+    await ThumbnailQueue.add(`${id}`, { id: id });
   }
 
   return json({ okay: "okay" });

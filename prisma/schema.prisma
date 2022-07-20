@@ -51,7 +51,7 @@ model ThumbnailJob {
 
   userId    String
   accountId Int
-  @@unique([userId, videoId])
+  // @@unique([userId, videoId])
 }
 
 model Thumbnails {
@@ -60,6 +60,7 @@ model Thumbnails {
   user    User         @relation(fields: [userId], references: [userId])
   job     ThumbnailJob @relation(fields: [jobId], references: [jobId])
   videoId String // yotube video id
+  contentType String
 
   jobId  Int
   userId String

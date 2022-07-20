@@ -120,7 +120,6 @@ export const ifNeededRefreshToken = async (account: YoutubeAccount) => {
   const twoMinutes = 1000 * 60 * 2;
 
   if (expiresAtInMs <= currentTimeInMs + twoMinutes) {
-    console.log("Refreshing token");
     const googleAuthClient = getGoogleOAuthClient();
     googleAuthClient.setCredentials({
       access_token: account.oauthToken,
