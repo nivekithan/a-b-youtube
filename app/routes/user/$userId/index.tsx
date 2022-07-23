@@ -201,7 +201,18 @@ export const action: ActionFunction = async ({ request }) => {
     });
 
     const id = thumbnailJob.jobId;
-    await ThumbnailQueue.add(`${id}`, { id: id });
+
+    await ThumbnailQueue.add(
+      `ThumbnailJob`,
+      { id: id },
+      {
+        repeat: {
+          every: 1000 * 60 * 60 * 24,
+          limit: thumbnailJob.testDays,
+          immediately: true,
+        },
+      }
+    );
   }
 
   return json({ okay: "okay" });

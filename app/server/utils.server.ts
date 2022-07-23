@@ -1,5 +1,6 @@
 import { json } from "@remix-run/server-runtime";
 import { SimpleCrypto } from "simple-crypto-js";
+
 export const badRequest = <Data = unknown>(data: Data) => {
   return json(data, { status: 401 });
 };

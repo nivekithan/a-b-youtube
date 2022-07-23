@@ -1,14 +1,14 @@
 import type { QueueOptions } from "bullmq";
+import { QueueScheduler } from "bullmq";
 import { Queue, Worker } from "bullmq";
 import { prisma } from "~/db.server";
 import { changeThumbnail } from "~/models/videos.server";
-import { getFileStream } from "./storage.server";
 
 const thumbnailQueueName = "thumbanilQueue";
 
 const redisConnectionOptions: QueueOptions["connection"] = {
   host: "localhost",
-  port: 49153,
+  port: 49155,
   password: "redispw",
 };
 
@@ -40,13 +40,11 @@ export const ThumbnailWorker = new Worker<{ id: number }, null | string>(
       thumbnail: changeToThumbnail,
       thumbnailJob: thumbnailJob,
     });
-
     return "Success";
   },
   { connection: redisConnectionOptions }
 );
 
-ThumbnailWorker.on("error", (err) => {
-  console.log("ThumbnailWorker error");
-  console.log(err);
+new QueueScheduler(thumbnailQueueName, {
+  connection: redisConnectionOptions,
 });
