@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { SeedUsers, SeedUsersType } from "../seedData/user";
+import { SeedUsers, SeedUsersType } from "../seedData/data";
 
 test("Logging out from the sidebar", async ({ page }) => {
   await page.goto("http://localhost:3000/");

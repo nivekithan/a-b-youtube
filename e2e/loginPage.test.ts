@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { SeedUsers, SeedUsersType } from "../seedData/user";
+import { SeedUsers, SeedUsersType } from "../seedData/data";
 
 test("Login Page has necessary links", async ({ page }) => {
   await page.goto("http://localhost:3000/");

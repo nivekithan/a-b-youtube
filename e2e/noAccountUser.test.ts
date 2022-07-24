@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { SeedUsersType } from "../seedData/user";
+import { SeedUsersType } from "../seedData/data";
 
 test("Connect your youtube account should open up google for oauth access", async ({
   page,

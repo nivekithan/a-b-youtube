@@ -8,8 +8,15 @@ const server = setupServer(
   rest.get<{}>(/.*/, async (req, res, ctx) => {
     const url = req.url;
     console.count("Request count");
+    console.log(req.headers);
     console.log(url);
-    return req.passthrough();
+    return res(ctx.json("Hello there"));
+  }),
+  rest.post(/.*/, async (req, res, ctx) => {
+    const url = req.url;
+    console.count("Request count Post");
+    console.log(url);
+    return res(ctx.json("Hello there Post"));
   })
 );
 

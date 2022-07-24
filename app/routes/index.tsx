@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { DevAndTestOnly } from "~/components/devAndTestOnly";
-import { SeedUsersType } from "seedData/user";
+import { SeedUsersType } from "~/../seedData/data";
 
 const ZLoaderSchema = z.object({ googleAuthUrl: z.string() });
 
@@ -74,7 +74,7 @@ export default function RenderHomePage() {
             </Button>
           </Typography>
           <DevAndTestOnly>
-            <Stack direction="row">
+            <Stack direction="row" className="gap-x-2">
               {(() => {
                 const usersType = Object.values(SeedUsersType);
                 return usersType.map((userType) => {

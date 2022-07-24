@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/server-runtime";
-import { SeedUsers, SeedUsersType } from "seedData/user";
+import { SeedUsers, SeedUsersType } from "seedData/data";
 import { createUserSession } from "~/server/session.server";
 import { badRequest, getEnvVar } from "~/server/utils.server";
 

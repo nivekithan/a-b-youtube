@@ -9,6 +9,7 @@
     "dev": "run-p dev:*",
     "dev:remix": "cross-env NODE_ENV=development binode --require ./mocks -- @remix-run/dev:remix dev",
     "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
+    "prisma:seed": "prisma db push --force-reset && prisma db seed",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
