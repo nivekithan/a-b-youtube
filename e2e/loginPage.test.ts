@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { SeedUsers, SeedUsersType } from "../seedData/user";
 
 test("Login Page has necessary links", async ({ page }) => {
   await page.goto("http://localhost:3000/");
@@ -21,3 +22,14 @@ test("Login Page has necessary links", async ({ page }) => {
     expect(continueWthGuest).toHaveAttribute("href", "/api/v1/guestLogin"),
   ]);
 });
+
+test("Logining in as user with no youtube account", async ({ page }) => {
+  await page.goto("http://localhost:3000/");
+
+  await page.locator(`text=${SeedUsersType.NO_CONNECTED_ACCOUNT}`).click();
+
+  await expect(page).toHaveURL(
+    `http://localhost:3000/user/${SeedUsers.NO_CONNECTED_ACCOUNT.userId}`
+  );
+});
+    

@@ -13,6 +13,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { DevAndTestOnly } from "~/components/devAndTestOnly";
+import { SeedUsersType } from "seedData/user";
 
 const ZLoaderSchema = z.object({ googleAuthUrl: z.string() });
 
@@ -71,6 +73,24 @@ export default function RenderHomePage() {
               Continue with guest account
             </Button>
           </Typography>
+          <DevAndTestOnly>
+            <Stack direction="row">
+              {(() => {
+                const usersType = Object.values(SeedUsersType);
+                return usersType.map((userType) => {
+                  const loginSearchParams = new URLSearchParams();
+                  loginSearchParams.set("userType", userType);
+                  const url = `/api/test/login?${loginSearchParams.toString()}`;
+
+                  return (
+                    <MUILink href={url} key={url}>
+                      {userType}
+                    </MUILink>
+                  );
+                });
+              })()}
+            </Stack>
+          </DevAndTestOnly>
         </Stack>
       </Box>
     </Container>

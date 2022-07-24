@@ -10,7 +10,9 @@ export type EnvVarNames =
   | "GOOGLE_API_CLIENT_SECRET"
   | "GOOGLE_API_REDIRECT_URI"
   | "SESSION_SECRET"
-  | "SIMPLE_CRYPTO_SECRET";
+  | "SIMPLE_CRYPTO_SECRET"
+  | "DATABASE_URL"
+  | "NODE_ENV";
 
 export const getEnvVar = (varName: EnvVarNames): string => {
   const envVarValue = process.env[varName];
