@@ -1,6 +1,5 @@
 import type { ClientUser } from "~/zSchemas/zSchema";
-import { Link } from "@remix-run/react";
-import { Avatar, Box, Stack, Typography } from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 
 export type UserCardProps = {
   clientUser: ClientUser;
