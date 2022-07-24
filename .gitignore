@@ -11,3 +11,4 @@ node_modules
 
 /app/styles/app.css
 /storage
+/playwright-report/*

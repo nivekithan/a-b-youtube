@@ -1,4 +1,4 @@
-import { Form, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { unstable_createMemoryUploadHandler } from "@remix-run/server-runtime";
 import {
@@ -7,7 +7,6 @@ import {
 } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { z } from "zod";
-import { BigOutlineLink } from "~/components/buttonAndLinks";
 import { prisma } from "~/db.server";
 import { generateGoogleSignUpUrl } from "~/models/google.server";
 import { requireUserId } from "~/models/user.server";
@@ -226,79 +225,36 @@ const useZLoaderData = (): LoaderData => {
 export default function RenderUserHomePage() {
   const loaderData = useZLoaderData();
 
+  const isNoAccountConnected = loaderData.connectedYoutubeAccountsCount === 0;
+
   return (
-    <div className="h-screen w-full flex flex-col gap-y-10">
-      {`Number of connected Accounts ${loaderData.connectedYoutubeAccountsCount}`}
-      <BigOutlineLink href={loaderData.googleAuthUrl}>
-        Connect your youtube account
-      </BigOutlineLink>
-      {(() => {
-        if (loaderData.recentlyPublishedVideo === null) return null;
-
-        const recentlyPublishedVideo = loaderData.recentlyPublishedVideo;
-        return (
-          <div className="flex flex-col gap-y-6">
-            <img
-              src={recentlyPublishedVideo.thumbnailUrl}
-              alt="Recently published video thumbnail"
-              style={{
-                width: recentlyPublishedVideo.width,
-                height: recentlyPublishedVideo.height,
-              }}
-            />
-            <p>
-              {`The video id is ${recentlyPublishedVideo.videoId} and title is ${recentlyPublishedVideo.videoTitle}`}
-            </p>
-
-            <Form
-              method="post"
-              encType="multipart/form-data"
-              className="flex flex-col gap-y-3"
-            >
-              <input
-                name="videoId"
-                hidden
-                value={recentlyPublishedVideo.videoId}
-                readOnly
-              />
-              <input
-                name="channelId"
-                hidden
-                value={recentlyPublishedVideo.channelId}
-                readOnly
-              />
-              <label htmlFor="testDays">
-                Number of days you want this test to happen
-              </label>
-              <input
-                id="testDays"
-                name="testDays"
-                type="number"
-                className="border-[3px] border-black max-w-[30%] rounded-md px-3 py-2"
-              />
-              <label htmlFor="thumbnails">Thumbanils for test</label>
-              <input
-                id="thumbnails"
-                name="thumbnails"
-                type="file"
-                multiple
-                accept="image/jpeg"
-                className="border-[3px] border-blue-400 rounded-md max-w-[30%] px-3 py-2"
-              />
-              <div>
-                <button
-                  type="submit"
-                  className="px-3 py-2 text-white bg-gray-700 rounded-md"
-                  name="actionType"
-                  value={validActionType.addTest}
-                >
-                  Submit thumbnails
-                </button>
-              </div>
-            </Form>
-          </div>
-        );
-      })()}
+    <div className="h-screen">
+      {isNoAccountConnected ? (
+        <div className="h-full grid place-items-center">
+          <NoAccountConnected googleAuthUrl={loaderData.googleAuthUrl} />
+        </div>
+      ) : null}
     </div>
   );
 }
+
+type NoAccountConnectedProps = {
+  googleAuthUrl: string;
+};
+
+const NoAccountConnected = ({ googleAuthUrl }: NoAccountConnectedProps) => {
+  return (
+    <div className="max-w-lg flex flex-col gap-y-4 items-center">
+      <h3 className="text-xl text-center">
+        No youtube account is connected. Connect now to start testing your
+        thumbnails
+      </h3>
+      <a
+        href={googleAuthUrl}
+        className="bg-gray-700 text-white px-16 py-2 rounded-md"
+      >
+        Connect Your Youtube account
+      </a>
+    </div>
+  );
+};
