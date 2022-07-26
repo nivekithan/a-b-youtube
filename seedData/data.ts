@@ -2,7 +2,7 @@ import type { User, YoutubeAccount } from "@prisma/client";
 
 export const SeedUsersType = {
   NO_CONNECTED_ACCOUNT: "NO_CONNECTED_ACCOUNT",
-  ONE_CONNECTED_ACCOUNT: "ONE_CONNECTED_ACCOUNT",
+  NO_THUMBNAIL_JOB_ACCOUNT: "NO_THUMBNAIL_JOB_ACCOUNT",
   EXPIRED_TOKEN_ACCOUNT: "EXPIRED_TOKEN_ACCOUNT",
 };
 
@@ -14,12 +14,12 @@ export const SeedUsers: Record<keyof typeof SeedUsersType, User> = {
       "https://gravatar.com/avatar/316497fccdcc2d03a1039de7e9131d14?s=400&d=robohash&r=x",
     userId: "userid:no-connected-account",
   },
-  ONE_CONNECTED_ACCOUNT: {
-    googleSub: "sub:one-connected-account",
-    name: "One Connected Account",
+  NO_THUMBNAIL_JOB_ACCOUNT: {
+    googleSub: "sub:no-thumbnail-job-account",
+    name: "No Thumbnail Job Account",
     pictureUrl:
       "https://gravatar.com/avatar/540c4d3192a386e2991bdcaa04e2ec9c?s=400&d=robohash&r=x",
-    userId: "userid:one-connected-account",
+    userId: "userid:no-thumbnail-job-account",
   },
   EXPIRED_TOKEN_ACCOUNT: {
     googleSub: "sub:expired-token-account",
@@ -35,18 +35,18 @@ export const SeedAccounts: Record<
   YoutubeAccount[]
 > = {
   NO_CONNECTED_ACCOUNT: [],
-  ONE_CONNECTED_ACCOUNT: [
+  NO_THUMBNAIL_JOB_ACCOUNT: [
     {
       accountId: 1,
-      channelId: "channelid:one-connected-account",
-      channelName: "channelname:one-connected-account",
+      channelId: "channelId:no-thumbnail-job-account",
+      channelName: "channelName:no-thumbnail-job-account",
       ChannelProfilePictureLink:
         "https://gravatar.com/avatar/f5578f8abbe6ba54058f3eb836af8a2d?s=400&d=robohash&r=x",
       expiresIn: new Date(new Date().getTime() + 2 * 360 * 24 * 60 * 60 * 1000),
-      oauthToken: "oauthToken:one-connected-account",
-      refreshToken: "refreshToken:one-connected-account",
-      uploadsPlaylistId: "uploadsPlaylistId:one-connected-account",
-      userId: "userid:one-connected-account",
+      oauthToken: "oauthToken:no-thumbnail-job-account",
+      refreshToken: "refreshToken:no-thumbnail-job-account",
+      uploadsPlaylistId: "uploadsPlaylistId:no-thumbnail-job-account",
+      userId: SeedUsers.NO_THUMBNAIL_JOB_ACCOUNT.userId,
     },
   ],
   EXPIRED_TOKEN_ACCOUNT: [
@@ -60,7 +60,7 @@ export const SeedAccounts: Record<
       oauthToken: "oauthToken:expired-token-account",
       refreshToken: "refreshToken:expired-token-account",
       uploadsPlaylistId: "uploadsPlaylistId:expired-token-account",
-      userId: "userid:expired-token-account",
+      userId: SeedUsers.EXPIRED_TOKEN_ACCOUNT.userId,
     },
   ],
 };

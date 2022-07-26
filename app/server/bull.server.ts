@@ -9,7 +9,6 @@ const thumbnailQueueName = "thumbanilQueue";
 const redisConnectionOptions: QueueOptions["connection"] = {
   host: "localhost",
   port: 49153,
-  password: "redispw",
 };
 
 export const ThumbnailQueue = new Queue<{ id: number }>(thumbnailQueueName, {

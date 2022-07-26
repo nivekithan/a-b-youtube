@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { unstable_createMemoryUploadHandler } from "@remix-run/server-runtime";
 import {
@@ -10,12 +10,12 @@ import { z } from "zod";
 import { prisma } from "~/db.server";
 import { generateGoogleSignUpUrl } from "~/models/google.server";
 import { requireUserId } from "~/models/user.server";
-import {
-  getCountOfConnectedYoutubeAccounts,
-} from "~/models/youtubeAccount.server";
+import { getCountOfConnectedYoutubeAccounts } from "~/models/youtubeAccount.server";
 import { ThumbnailQueue } from "~/server/bull.server";
 import { storeFile } from "~/server/storage.server";
 import { badRequest, encrypt, getEnvVar } from "~/server/utils.server";
+import * as Dialog from "@radix-ui/react-dialog";
+import { FileInput } from "~/components/fileInput";
 
 // const ZVideoSchema = z.union([
 //   z.object({
@@ -32,6 +32,7 @@ import { badRequest, encrypt, getEnvVar } from "~/server/utils.server";
 const ZLoaderSchema = z.object({
   connectedYoutubeAccountsCount: z.number(),
   googleAuthUrl: z.string(),
+  thumbnailJobs: z.array(z.object({})),
   // recentlyPublishedVideo: ZVideoSchema,
 });
 
@@ -90,6 +91,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json<LoaderData>({
     connectedYoutubeAccountsCount: count,
     googleAuthUrl: googleAuthUrl,
+    thumbnailJobs: [],
     // recentlyPublishedVideo: clientVideo,
   });
 };
@@ -222,13 +224,24 @@ const useZLoaderData = (): LoaderData => {
 export default function RenderUserHomePage() {
   const loaderData = useZLoaderData();
 
-  const isNoAccountConnected = loaderData.connectedYoutubeAccountsCount === 0;
+  const isAnyAccountConnected = loaderData.connectedYoutubeAccountsCount !== 0;
+
+  const isAnyThumbnailJobsCreated = loaderData.thumbnailJobs.length !== 0;
+
+  const isAccountCreatedButNoJobsCreated =
+    isAnyAccountConnected && !isAnyThumbnailJobsCreated;
 
   return (
     <div className="h-screen">
-      {isNoAccountConnected ? (
+      {!isAnyAccountConnected ? (
         <div className="h-full grid place-items-center">
           <NoAccountConnected googleAuthUrl={loaderData.googleAuthUrl} />
+        </div>
+      ) : null}
+
+      {isAccountCreatedButNoJobsCreated ? (
+        <div className="h-full grid place-items-center">
+          <AccountCreatedButNoJobsCreated />
         </div>
       ) : null}
     </div>
@@ -253,5 +266,98 @@ const NoAccountConnected = ({ googleAuthUrl }: NoAccountConnectedProps) => {
         Connect Your Youtube account
       </a>
     </div>
+  );
+};
+
+const AccountCreatedButNoJobsCreated = () => {
+  return (
+    <Dialog.Root>
+      <div className="flex flex-col gap-y-4 items-center">
+        <h3 className="text-xl text-center">
+          No A/B Testing has been created. Click to get started
+        </h3>
+        <Dialog.Trigger
+          className="bg-gray-700 text-white px-16 py-2 rounded-md"
+          type="button"
+        >
+          Start A/B Testing
+        </Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Overlay className="bg-black top-0 left-0 right-0 bottom-0 fixed bg-opacity-50 grid place-items-center">
+            <Dialog.Content className="min-w-[540px] border-2 rounded-md bg-white border-gray-200 flex flex-col gap-y-6 pb-4">
+              <Dialog.Title className="bg-gray-200 px-10 py-6 font-bold  rounded-md">
+                Start A/B Testing your thumbnails
+              </Dialog.Title>
+              <Form
+                method="post"
+                encType="multipart/form-data"
+                className=" px-10 flex flex-col gap-y-8 mt-2"
+                id="add-test-form"
+              >
+                {/* URL input */}
+                <div className="flex flex-col gap-y-3">
+                  <label className="text-gray-700" htmlFor="videoUrl">
+                    Url of your video
+                  </label>
+                  <div className="flex flex-col gap-y-2">
+                    <input
+                      id="videoUrl"
+                      name="videoUrl"
+                      type="url"
+                      placeholder="Url to your video"
+                      className="border border-black py-2 px-3 rounded-md"
+                    />
+                  </div>
+                </div>
+                {/* Test days input */}
+                <div className="flex justify-between items-center">
+                  <label
+                    htmlFor="testDays"
+                    className="text-gray-700 max-w-[150px]"
+                  >
+                    Number of days test should happen
+                  </label>
+                  <div className="flex  rounded-md border-gray-300 border-[3px] focus:border-gray-600">
+                    <input
+                      id="testDays"
+                      type="text"
+                      name="testDays"
+                      className="px-4 py-2 w-[70px] focus:outline-none"
+                    />
+                    <div className="bg-gray-300 grid place-items-center px-2 text-gray-700 text-sm font-light">
+                      days
+                    </div>
+                  </div>
+                </div>
+                {/* Thumbnails Input */}
+                <div className="flex flex-col gap-y-3">
+                  <label className="text-gray-700" htmlFor="thumbnails">
+                    Choose thumbnails
+                  </label>
+                  <div className="flex flex-col gap-y-2">
+                    <FileInput name="thumbnails-1" />
+                    <FileInput name="thumbnails-2" />
+                    <FileInput name="thumbnails-3" />
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Dialog.Close className="text-sm text-gray-400 text-light hover:underline">
+                    Close the modal
+                  </Dialog.Close>
+                  <button
+                    className="px-4 py-2 bg-gray-700 text-white rounded-md"
+                    form="add-test-form"
+                    name="actionType"
+                    value={validActionType.addTest}
+                  >
+                    Start Testing
+                  </button>
+                </div>
+              </Form>
+            </Dialog.Content>
+          </Dialog.Overlay>
+        </Dialog.Portal>
+      </div>
+    </Dialog.Root>
   );
 };
