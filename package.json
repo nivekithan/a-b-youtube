@@ -17,7 +17,8 @@
     "start:mocks": "binode --require ./mocks -- @remix-run/serve:remix-serve build",
     "test": "playwright test",
     "typecheck": "tsc -b && tsc -b cypress",
-    "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run"
+    "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run",
+    "tunnel" : "cloudflared tunnel --url http://localhost:3000 --http-host-header localhost:3000"
   },
   "prettier": {},
   "eslintIgnore": [
