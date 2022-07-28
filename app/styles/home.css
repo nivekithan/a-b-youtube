@@ -6,6 +6,7 @@
 
 .one-one {
   grid-area: one-one;
+  cursor: pointer;
 }
 .one-two {
   grid-area: one-two;
@@ -23,12 +24,21 @@
   grid-area: three-two;
 }
 
+.one-one,
+.one-two,
+.two-one,
+.two-two,
+.three-one,
+.three-two {
+  height: 1fr;
+}
+
 .main {
   height: 100%;
   display: grid;
   align-items: center;
-  grid-auto-columns: 1fr;
-  grid-auto-flow: column;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   grid-template-areas:
     "one-one one-two one-two one-two one-two"
     "two-one two-one two-one two-two two-two"

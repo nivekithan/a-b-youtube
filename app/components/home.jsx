@@ -1,5 +1,11 @@
 import "../styles/home.css";
-import { AddVideo, Timeline, TodayReport, Comparison, Upcoming } from "../calls/cards";
+import {
+  AddVideo,
+  Timeline,
+  TodayReport,
+  Comparison,
+  Upcoming,
+} from "../calls/cards";
 
 export const Home = () => {
   return (
@@ -17,11 +23,11 @@ export const Home = () => {
         <div className="card two-two">
           <Comparison />
         </div>
-        <div className="card three-one">More Analytics</div>
-        <div className="card three-two">
+        <div className="card three-one">
           <Upcoming />
         </div>
+        <div className="card three-two">More Analytics</div>
       </div>
     </div>
   );
-}
+};

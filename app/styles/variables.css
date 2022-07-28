@@ -9,6 +9,8 @@
   --gray: hsl(228, 2%, 54%);
   --accent-1: hsl(172, 46%, 77%);
   --accent-2: hsl(307, 62%, 87%);
+  --accent-b: hsl(200, 90%, 54%);
+  --accent-o: hsl(35, 96%, 67%);
   --color: hsl(240, 11%, 19%);
   --color-li: hsl(231, 7%, 19%);
 }
@@ -70,8 +72,7 @@ body {
 }
 
 .card {
-  padding: 12px 20px;
   background-color: var(--color);
   border-radius: 10px;
-  height: 27vh;
+  height: 100%;
 }
