@@ -8,7 +8,7 @@ import {
 export const VideoRecord = () => {
   return (
     <div className="hero">
-      <div className="main">
+      <div className="videoRecord-main">
         <div className="card one-one">
           <Timeline />
         </div>

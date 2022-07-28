@@ -1,14 +1,13 @@
 import "../styles/home.css";
-import {
-  Timeline,
-  BestThumbnail,
-  ClickGraph,
-} from "../calls/cards";
 
 export const Home = () => {
   return (
     <div className="hero">
-      Home
+      <div className="main">
+        <div className="card one-one"></div>
+        <div className="card two-one"></div>
+        <div className="card two-two"></div>
+      </div>
     </div>
   );
 };

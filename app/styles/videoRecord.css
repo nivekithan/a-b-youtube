@@ -1,26 +1,4 @@
-.hero {
-  height: 100vh;
-  width: 100vw;
-  padding: 40px 40px;
-}
-
-.one-one {
-  grid-area: one-one;
-}
-.two-one {
-  grid-area: two-one;
-}
-.two-two {
-  grid-area: two-two;
-}
-
-.one-one,
-.two-one,
-.two-two{
-  height: 1fr;
-}
-
-.main {
+.videoRecord-main {
   height: 100%;
   display: grid;
   align-items: center;
@@ -30,50 +8,6 @@
     "one-one one-one"
     "two-one two-two";
   gap: 30px;
-}
-
-
-/**
-*** Cards ***
-**/
-.card-content {
-  height: 100%;
-  width: 100%;
-  flex-direction: column;
-  position: relative;
-  padding: 15px 20px;
-}
-.card-title {
-  font-size: 1.4rem;
-  margin-bottom: 5px;
-  z-index: 1;
-}
-.card-subtitle {
-  font-size: 1rem;
-  color: var(--gray);
-  margin-bottom: 5px;
-  z-index: 1;
-}
-.card-accent {
-  font-size: 1.1rem;
-  color: var(--accent-1);
-  margin-bottom: 5px;
-  z-index: 1;
-}
-.card-button {
-  cursor: pointer;
-  color: var(--white);
-  font-size: 1.1rem;
-  background-color: var(--black);
-  padding: 10px 15px;
-  border-radius: 5px;
-  border: none;
-  z-index: 1;
-}
-.card-content-header {
-  width: 100%;
-  justify-content: space-between;
-  margin-bottom: 10px;
 }
 
 /*
