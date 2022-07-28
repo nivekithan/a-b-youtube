@@ -9,8 +9,9 @@ import {
 } from "@remix-run/react";
 // import theme from "./src/theme";
 import variablesCss from "./styles/variables.css";
-import homeCss from "./styles/home.css";
 import navbarCss from "./styles/navbar.css";
+import homeCss from "./styles/home.css";
+import videoRecordCss from "./styles/videoRecord.css";
 import cardsCss from "./styles/cards.css";
 import type { LinksFunction } from "@remix-run/server-runtime";
 
@@ -57,6 +58,10 @@ export const links: LinksFunction = () => {
     {
       rel: "stylesheet",
       href: homeCss,
+    },
+    {
+      rel: "stylesheet",
+      href: videoRecordCss,
     },
     {
       rel: "stylesheet",

@@ -2,30 +2,51 @@ import "../styles/cards.css";
 
 var data = [
   {
-    clicks: "4000",
+    clicks: 4000,
     stats: `+${18}%`,
     date: "12th july 2022",
     img: "https://images.unsplash.com/photo-1658901742285-a5cba478b576?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=918&q=80",
   },
   {
-    clicks: "3000",
-    stats: `+${5}%`,
+    clicks: 5000,
     date: "11th july 2022",
     img: "https://images.unsplash.com/photo-1658932501338-c4e396dc76aa?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
   },
-  { clicks: "200;", stats: `+${4}%`, date: "10th july 2022", img: "" },
-  { clicks: "900", stats: `+${2}%`, date: "9th july 2022", img: "" },
-  { clicks: "1200", stats: `+${0}%`, date: "8th july 2022", img: "" },
+  {
+    clicks: 700,
+    date: "10th july 2022",
+    img: "https://images.unsplash.com/photo-1511576661531-b34d7da5d0bb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+  },
+  {
+    clicks: 8700,
+    date: "9th july 2022",
+    img: "https://images.unsplash.com/photo-1658860842042-1e1332cd63ed?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1015&q=80",
+  },
+  {
+    clicks: 4200,
+    date: "8th july 2022",
+    img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+  },
+  {
+    clicks: 6200,
+    date: "7th july 2022",
+    img: "https://images.unsplash.com/photo-1494500764479-0c8f2919a3d8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+  },
 ];
 
-const AddVideo = () => {
-  return (
-    <div className="card-content">
-      <div className="card-title">Add New Thumbnail</div>
-      <div className="card-accent">Available Date</div>
-    </div>
-  );
-};
+var maxClicks = data[0].clicks;
+var totalClicks = 0;
+
+for (let i = 0; i < data.length; i++) {
+  let val = data[i].clicks;
+  totalClicks += val;
+  if (maxClicks < val) {
+    maxClicks = val;
+  }
+}
+
+var one = maxClicks / 95;
+var midean = totalClicks / data.length;
 
 const Timeline = () => {
   return (
@@ -45,7 +66,7 @@ const Timeline = () => {
                 <div className="card-timeline-item-clicks">{el.clicks}</div>
                 <div className="card-timeline-item-date">{el.date}</div>
                 <div className="card-timeline-item-stats">
-                  {el.stats} than yesterday
+                  {((el.clicks / midean - 1) * 100).toFixed(2)}% from midean
                 </div>
                 <div className="card-timeline-item-gradient"></div>
                 <div className="card-timeline-item-image-gradient"></div>
@@ -58,108 +79,69 @@ const Timeline = () => {
             );
           })}
         </div>
-        <div className="card-timeline-gradient"></div>
       </div>
     </div>
   );
 };
 
-const TodayReport = () => {
-  return (
-    <div className="card-content">
-      <div className="card-title">Add New</div>
-      <div className="card-subtitle">Thumbnail</div>
-      <div className="card-accent">Date available</div>
-    </div>
-  );
-};
+const BestThumbnail = () => {
+  var best = data[0];
+  for (let i = 0; i < data.length; i++) {
+    if(maxClicks == data[i].clicks){
+      best = data[i]
+      break;
+    }
+  }
 
-const Comparison = () => {
-  const graphBest = [90, 43, 97, 82, 45];
-  const graphLive = [60, 23, 75, 97, 25];
-
-  return (
-    <div className="card-content">
-      <div className="card-comparison flex">
-        <div className="card-title">Best or Latest</div>
-        <div className="card-comparison-graph-container">
-          <div
-            className="card-comparison-graph-best"
-            style={{
-              webkitClipPath: `polygon(0 ${100 - graphBest[0]}%, 25% ${
-                100 - graphBest[1]
-              }% , 50% ${100 - graphBest[2]}% , 75% ${
-                100 - graphBest[3]
-              }% , 100% ${100 - graphBest[4]}%, 100% 100%, 0 100%)`,
-              clipPath: `polygon(0 ${100 - graphBest[0]}%, 25% ${
-                100 - graphBest[1]
-              }% , 50% ${100 - graphBest[2]}% , 75% ${
-                100 - graphBest[3]
-              }% , 100% ${100 - graphBest[4]}%,100% 100%, 0 100%)`,
-            }}
-          ></div>
-          <div
-            className="card-comparison-graph-latest"
-            style={{
-              webkitClipPath: `polygon(0 ${100 - graphLive[0]}%, 25% ${
-                100 - graphLive[1]
-              }% , 50% ${100 - graphLive[2]}% , 75% ${
-                100 - graphLive[3]
-              }% , 100% ${100 - graphLive[4]}%, 100% 100%, 0 100%)`,
-              clipPath: `polygon(0 ${100 - graphLive[0]}%, 25% ${
-                100 - graphLive[1]
-              }% , 50% ${100 - graphLive[2]}% , 75% ${
-                100 - graphLive[3]
-              }% , 100% ${100 - graphLive[4]}%,100% 100%, 0 100%)`,
-            }}
-          ></div>
-          <div className="card-comparison-graph-day flex">
-            {[0, 1, 2, 3, 4].map((i) => {
-              return (
-                <div className="card-comparison-graphg-time">{i * 6}:00</div>
-              );
-            })}
-          </div>
-        </div>
-        <div className="card-comparison-bottom flex">
-          <div className="card-comparison-bottom-left">
-            <div className="flex">
-              <div className="comparison-bottom-color"></div>
-              <div className="comparison-bottom-date">{data[0].date}</div>
-            </div>
-            <div className="comparison-bottom-text card-subtitle">
-              Best Thumbnail
-            </div>
-          </div>
-          <div className="card-comparison-bottom-right">
-            <div className="flex">
-              <div className="comparison-bottom-color"></div>
-              <div className="comparison-bottom-date">{data[1].date}</div>
-            </div>
-            <div className="comparison-bottom-text card-subtitle">
-              Live Thumbnail
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Upcoming = () => {
   return (
     <div
       className="card-content-bg flex"
       style={{
-        backgroundImage: `url('${data[1].img}')`,
+        backgroundImage: `url('${best.img}')`,
       }}
     >
-      <div className="card-subtitle">Nest Thumbnail</div>
-      <div className="card-title">Date</div>
-      <div className="card-accent">Time left</div>
+      <div className="card-subtitle">Best Thumbnail</div>
+      <div className="card-title">{best.clicks}</div>
+      <div className="card-accent">Clicks</div>
       <div className="card-content-gradient"></div>
     </div>
   );
 };
 
-export { AddVideo, Timeline, TodayReport, Comparison, Upcoming };
+const ClickGraph = () => {
+  let tempGraph = "";
+
+  for (let i = 0; i < data.length; i++) {
+    const value = data[i].clicks;
+
+    const percent = value / one;
+
+    tempGraph += `${i * (100 / (data.length - 1))}% ${100 - percent}%, `;
+  }
+  const graph = `polygon( ${tempGraph}100% 100%,0 100%)`;
+
+  return (
+    <div className="card-content">
+      <div className="card-comparison flex">
+        <div className="card-title">Graph of Clicks</div>
+        <div className="card-comparison-graph-container">
+          <div
+            className="card-comparison-graph"
+            style={{ WebkitClipPath: graph, clipPath: graph }}
+          ></div>
+          <div className="card-comparison-graph-days flex">
+            {data.map((i) => {
+              return (
+                <div key={i.date} className="card-comparison-graph-day">
+                  {i.date.replace("2022", "")}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export { Timeline, BestThumbnail, ClickGraph };
