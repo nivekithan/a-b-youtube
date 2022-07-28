@@ -7,9 +7,8 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-// import theme from "./src/theme";
-import styles from "./styles/app.css";
 import type { LinksFunction } from "@remix-run/server-runtime";
+import styles from "./styles/index.css";
 
 interface DocumentProps {
   children: React.ReactNode;
