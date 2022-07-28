@@ -1,4 +1,4 @@
-import "../styles/cards.css";
+import "../styles/videoRecord.css";
 
 var data = [
   {

@@ -31,3 +31,166 @@
     "two-one two-two";
   gap: 30px;
 }
+
+
+/**
+*** Cards ***
+**/
+.card-content {
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  position: relative;
+  padding: 15px 20px;
+}
+.card-title {
+  font-size: 1.4rem;
+  margin-bottom: 5px;
+  z-index: 1;
+}
+.card-subtitle {
+  font-size: 1rem;
+  color: var(--gray);
+  margin-bottom: 5px;
+  z-index: 1;
+}
+.card-accent {
+  font-size: 1.1rem;
+  color: var(--accent-1);
+  margin-bottom: 5px;
+  z-index: 1;
+}
+.card-button {
+  cursor: pointer;
+  color: var(--white);
+  font-size: 1.1rem;
+  background-color: var(--black);
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  z-index: 1;
+}
+.card-content-header {
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+/*
+** Timeline **
+*/
+.card-timeline {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  justify-content: start;
+  overflow-x: scroll;
+}
+.card-timeline-items {
+  height: 100%;
+  width: 100%;
+  justify-content: start;
+  overflow-x: scroll;
+  padding-bottom: 10px;
+}
+.card-timeline-item {
+  position: relative;
+  height: 100%;
+  min-width: 300px;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 10px;
+  margin-right: 25px;
+  background: transparent;
+  border-radius: 10px;
+  z-index: 1;
+}
+.card-timeline-item-clicks {
+  font-size: 1rem;
+}
+.card-timeline-item-date {
+  font-size: 0.8rem;
+}
+.card-timeline-item-stats {
+  font-size: 0.8rem;
+  color: var(--accent-1);
+}
+
+.card-timeline-item-image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  /*Because of padding in card*/
+  transform: translate(10px, 10px);
+  object-fit: cover;
+  border-radius: 10px;
+  z-index: -2;
+}
+.card-timeline-item-image-gradient {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  /*Because of padding in card*/
+  transform: translate(10px, 10px);
+  background: linear-gradient(transparent, var(--color));
+  border-radius: 10px;
+  z-index: -1;
+}
+
+/*
+**Upcoming**
+*/
+.card-content-bg {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  background-size: cover;
+  border-radius: 10px;
+}
+.card-content-gradient {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--color), transparent);
+  border-radius: 10px;
+  z-index: 0;
+}
+.card-content-bg > div {
+  padding-left: 15px;
+}
+
+/*
+**Comparison Graph**
+*/
+.card-comparison {
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.card-comparison-graph-container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  flex: 1;
+}
+
+.card-comparison-graph {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background: linear-gradient(var(--accent-1), transparent);
+}
+.card-comparison-graph-days {
+  width: 105%;
+  height: 100%;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-left: -2.5%;
+  font-size: 0.7rem;
+}
