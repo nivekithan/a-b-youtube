@@ -63,14 +63,62 @@
   cursor: pointer;
   color: var(--white);
   font-size: 1.1rem;
+  text-align: center;
   background-color: var(--black);
   padding: 10px 15px;
   border-radius: 5px;
   border: none;
   z-index: 1;
 }
+.card-button:hover {
+  font-weight: 600;
+  color: var(--black);
+  background-color: var(--accent-1);
+}
 .card-content-header {
   width: 100%;
   justify-content: space-between;
   margin-bottom: 10px;
+}
+
+/**
+*** Home specials ***
+**/
+.home-card-flex{
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.home-conditions {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px 0px;
+}
+.home-conditions .flex {
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.home-condition-label {
+  margin-bottom: 10px;
+}
+.home-condition-input {
+  color: var(--white);
+  min-width: 100px;
+  padding: 5px;
+  background-color: var(--black);
+  border: none;
+  border-radius: 5px;
+  border: 1px solid var(--black);
+}
+.home-condition-input:focus {
+  outline: none;
+  border: 1px solid var(--gray);
+}
+.home-start-button{
+  width: 100%;
 }
