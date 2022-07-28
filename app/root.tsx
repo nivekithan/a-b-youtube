@@ -8,7 +8,6 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 // import theme from "./src/theme";
-// import styles from "./styles/app.css";
 import variablesCss from "./styles/variables.css";
 import homeCss from "./styles/home.css";
 import navbarCss from "./styles/navbar.css";
