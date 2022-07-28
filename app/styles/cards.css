@@ -1,0 +1,77 @@
+.card-content {
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+}
+.card-title {
+  font-size: 1.3rem;
+  margin-bottom: 5px;
+}
+.card-subtitle {
+  color: var(--gray);
+  margin-bottom: 5px;
+}
+.card-accent {
+  color: var(--accent-1);
+  margin-bottom: 5px;
+}
+.card-button {
+  cursor: pointer;
+  color: var(--white);
+  font-size: 1.1rem;
+  background-color: var(--black);
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+}
+.card-content-header {
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.card-thumbnailsList {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  justify-content: start;
+  overflow-x: scroll;
+}
+.card-thumbnailsList-items {
+  height: 100%;
+  width: 100%;
+  justify-content: start;
+  overflow-x: scroll;
+  padding-bottom: 10px;
+}
+
+.card-thumbnailsList-gradient {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 20px);
+  z-index: 2;
+  background: linear-gradient(90deg, #00000000 80%, var(--color));
+  pointer-events: none;
+}
+
+.card-thumbnailsList-item {
+  position: relative;
+  width: 200px;
+  min-width: 200px;
+  height: 100%;
+  padding: 10px;
+  margin-right: 10px;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  background: linear-gradient(#00000000, var(--black));
+  border-radius: 10px;
+}
+.card-thumbnailsList-item-clicks {
+  font-size: 1.2rem;
+}
+.card-thumbnailsList-item-date {
+}
+.card-thumbnailsList-item-stats {
+  color: var(--accent-1);
+}

@@ -1,9 +1,12 @@
-import { HomePage } from "../components/homePage";
+import { Home } from "../components/home.jsx";
+import { Navbar } from "../components/navbar.jsx";
+import "../styles/variables.css";
 
 export default function Page() {
   return (
-    <div className=" bg-blue-700 text-white p-5">
-      <HomePage />
+    <div className="App flex">
+      <Navbar />
+      <Home />
     </div>
   );
 }

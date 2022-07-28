@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap');
+
+/*
+** Variables **
+*/
+:root {
+  --white: hsl(0, 0%, 91%);
+  --black: hsl(234, 18%, 11%);
+  --gray: hsl(228, 2%, 54%);
+  --accent-1: hsl(172, 46%, 77%);
+  --accent-2: hsl(307, 62%, 87%);
+  --color: hsl(240, 11%, 19%);
+  --color-li: hsl(231, 7%, 19%);
+}
+
+/*
+** Basic **
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  color: var(--white);
+  background: var(--black);
+  font-family: "Manrope", sans-serif;
+}
+.App{
+  width: 100vw;
+  height: 100vh;
+}
+
+/*
+** Scrollbar **
+*/
+
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--color);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--gray);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-1);
+}
+
+/*
+** Pre define  classes **
+*/
+.flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  padding: 12px 20px;
+  background-color: var(--color);
+  border-radius: 10px;
+  height: 27vh;
+}
