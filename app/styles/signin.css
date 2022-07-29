@@ -38,6 +38,7 @@
   width: 70%;
 }
 .signin-card-button {
+  cursor: pointer;
   width: 100%;
   font-size: 1.3rem;
   padding: 10px 20px;
