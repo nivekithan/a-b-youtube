@@ -1,4 +1,5 @@
 import "../styles/home.css";
+import { AiOutlineRight } from "react-icons/ai";
 
 const StepOne = () => {
   return (
@@ -81,7 +82,12 @@ const StepThree = () => {
           />
         </div>
       </div>
-      <div className="card-button home-start-button">Start</div>
+      <div className="card-button home-start-button">
+        Start{" "}
+        <div className="icon">
+          <AiOutlineRight />
+        </div>
+      </div>
     </div>
   );
 };

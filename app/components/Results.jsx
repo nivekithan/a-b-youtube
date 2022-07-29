@@ -1,4 +1,5 @@
 import "../styles/list.css";
+import { AiOutlineRight } from "react-icons/ai";
 
 const data = [
   {
@@ -66,7 +67,12 @@ export const Results = () => {
                   ) : (
                     <div className="list-status-ongoing">Ongoing</div>
                   )}
-                  <div className="card-button">View Details</div>
+                  <div className="card-button">
+                    View Details{" "}
+                    <div className="icon">
+                      <AiOutlineRight />
+                    </div>
+                  </div>
                 </div>
               </div>
             );

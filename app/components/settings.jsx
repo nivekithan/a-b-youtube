@@ -1,4 +1,5 @@
 import "../styles/list.css";
+import { VscAccount } from "react-icons/vsc";
 
 export const Settings = () => {
   return (
@@ -8,8 +9,9 @@ export const Settings = () => {
         <div className="list-items">
           <div className="list-item flex">
             <div className="flex">
-              <img src="" alt="icon" className="list-item-image" />
-              <div className="list-item-title">Switch to another Youtube channel</div>
+              <div className="list-item-title">
+                Switch to another Youtube channel
+              </div>
             </div>
             <div className="flex">
               <div className="card-button">Switch Channel</div>
@@ -17,7 +19,6 @@ export const Settings = () => {
           </div>
           <div className="list-item flex">
             <div className="flex">
-              <img src="" alt="icon" className="list-item-image" />
               <div className="list-item-title">Settings Title</div>
             </div>
             <div className="flex">
@@ -26,7 +27,6 @@ export const Settings = () => {
           </div>
           <div className="list-item flex">
             <div className="flex">
-              <img src="" alt="icon" className="list-item-image" />
               <div className="list-item-title">Settings Title</div>
             </div>
             <div className="flex">

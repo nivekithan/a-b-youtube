@@ -77,3 +77,9 @@ body {
   border-radius: 10px;
   height: 100%;
 }
+
+.icon{
+  display: inline-block;
+  margin-right: 5px;
+  transform: translate(0%, 10%);
+}

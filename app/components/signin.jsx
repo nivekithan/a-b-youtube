@@ -1,4 +1,5 @@
 import "../styles/signin.css";
+import { FaGoogle, FaUserAlt } from "react-icons/fa";
 
 const Svg = () => {
   return (
@@ -42,8 +43,18 @@ export const Signin = () => {
       <div className="signin-card flex">
         <div className="signin-card-title">Project Name</div>
         <div>
-          <div className="signin-card-button">Continue with Google</div>
-          <div className="signin-card-button">Continue in Demo account</div>
+          <div className="signin-card-button">
+            <div className="icon">
+              <FaGoogle />
+            </div>
+            Continue with Google
+          </div>
+          <div className="signin-card-button">
+            <div className="icon">
+              <FaUserAlt />
+            </div>
+            Continue in Demo account
+          </div>
         </div>
       </div>
     </div>
