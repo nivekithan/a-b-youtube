@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { DevAndTestOnly } from "~/components/devAndTestOnly";
 import { SeedUsersType } from "~/../seedData/data";
+import React from "react";
 
 const ZLoaderSchema = z.object({ googleAuthUrl: z.string() });
 
@@ -75,7 +76,7 @@ export default function RenderHomePage() {
           </Typography>
           <DevAndTestOnly>
             <Stack direction="row" className="gap-x-2">
-              {(() => {
+              {((): React.ReactNode => {
                 const usersType = Object.values(SeedUsersType);
                 return usersType.map((userType) => {
                   const loginSearchParams = new URLSearchParams();

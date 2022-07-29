@@ -2,7 +2,7 @@ import { json } from "@remix-run/server-runtime";
 import { SimpleCrypto } from "simple-crypto-js";
 
 export const badRequest = <Data = unknown>(data: Data) => {
-  return json(data, { status: 401 });
+  return json(data, { status: 400 });
 };
 
 export type EnvVarNames =
@@ -13,7 +13,8 @@ export type EnvVarNames =
   | "SIMPLE_CRYPTO_SECRET"
   | "DATABASE_URL"
   | "NODE_ENV"
-  | "REDIS_HOST";
+  | "REDIS_HOST"
+  | "GOOGLE_API_KEY";
 
 export const getEnvVar = (varName: EnvVarNames): string => {
   const envVarValue = process.env[varName];

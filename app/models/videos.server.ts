@@ -3,6 +3,7 @@ import { google } from "googleapis";
 import { z } from "zod";
 import { prisma } from "~/db.server";
 import { getFileStream } from "~/server/storage.server";
+import { getEnvVar } from "~/server/utils.server";
 import { getGoogleOAuthClient } from "./google.server";
 import { ifNeededRefreshToken } from "./youtubeAccount.server";
 
@@ -94,29 +95,49 @@ export const changeThumbnail = async ({
   thumbnail,
   thumbnailJob,
 }: ChangeThumbnailArgs) => {
+  await ifNeededRefreshToken(account);
+
+  const videoId = thumbnailJob.videoId;
+
+  const googleAuthClient = getGoogleOAuthClient();
+  googleAuthClient.setCredentials({ access_token: account.oauthToken });
+
+  const thumbnailStream = getFileStream(thumbnail.fileId);
+
+  await google.youtube("v3").thumbnails.set({
+    auth: googleAuthClient,
+    videoId: videoId,
+    uploadType: thumbnail.contentType,
+    media: { mimeType: thumbnail.contentType, body: thumbnailStream },
+  });
+
+  await prisma.thumbnailJob.update({
+    where: { jobId: thumbnailJob.jobId },
+    data: { currentDay: { increment: 1 } },
+  });
+};
+
+export const getChannelIdOfVideo = async (
+  videoId: string
+): Promise<string | null> => {
   try {
-    await ifNeededRefreshToken(account);
-
-    const videoId = thumbnailJob.videoId;
-
-    const googleAuthClient = getGoogleOAuthClient();
-    googleAuthClient.setCredentials({ access_token: account.oauthToken });
-
-    const thumbnailStream = getFileStream(thumbnail.fileId);
-
-    await google.youtube("v3").thumbnails.set({
-      auth: googleAuthClient,
-      videoId: videoId,
-      uploadType: thumbnail.contentType,
-      media: { mimeType: thumbnail.contentType, body: thumbnailStream },
+    const channel = await google.youtube("v3").videos.list({
+      id: [videoId],
+      part: ["snippet"],
+      key: getEnvVar("GOOGLE_API_KEY"),
     });
 
-    await prisma.thumbnailJob.update({
-      where: { jobId: thumbnailJob.jobId },
-      data: { currentDay: { increment: 1 } },
+    const singleVideoItem = channel.data.items?.[0];
+
+    const ZVideoSchema = z.object({
+      snippet: z.object({ channelId: z.string() }),
     });
+
+    const singleVideo = ZVideoSchema.parse(singleVideoItem);
+
+    return singleVideo.snippet.channelId;
   } catch (err) {
-    console.log(`Something has gone wrong`);
-    console.log(err);
+    console.error(err);
+    return null;
   }
 };

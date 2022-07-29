@@ -1,4 +1,9 @@
-import { Form, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useTransition,
+} from "@remix-run/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { unstable_createMemoryUploadHandler } from "@remix-run/server-runtime";
 import {
@@ -16,6 +21,8 @@ import { storeFile } from "~/server/storage.server";
 import { badRequest, encrypt, getEnvVar } from "~/server/utils.server";
 import * as Dialog from "@radix-ui/react-dialog";
 import { FileInput } from "~/components/fileInput";
+import { getChannelIdOfVideo } from "~/models/videos.server";
+import { useEffect, useState } from "react";
 
 // const ZVideoSchema = z.union([
 //   z.object({
@@ -134,6 +141,10 @@ export const action: ActionFunction = async ({ request }) => {
   if (actionType === validActionType.addTest) {
     const stringifiedThumbnails = formData.getAll("thumbnails");
 
+    if (stringifiedThumbnails.length > 3) {
+      return badRequest("Too many thumbnails");
+    }
+
     const parsedThumbnails = stringifiedThumbnails.map((thumbnailInStr) => {
       if (!thumbnailInStr || typeof thumbnailInStr !== "string") {
         throw badRequest("Thumbnails is required");
@@ -153,23 +164,47 @@ export const action: ActionFunction = async ({ request }) => {
       return badRequest("Thumbnails is required");
     }
 
-    const videoId = formData.get("videoId");
-
-    if (!videoId || typeof videoId !== "string") {
-      return badRequest("Video id is required");
-    }
-
+    const videoUrl = formData.get("videoUrl");
     const testDaysInStr = formData.get("testDays");
+
+    if (!videoUrl || typeof videoUrl !== "string") {
+      return badRequest("Video url is required");
+    }
 
     if (!testDaysInStr || typeof testDaysInStr !== "string") {
       return badRequest("Test days is required");
     }
+
     const testDays = parseInt(testDaysInStr, 10);
 
-    const channelId = formData.get("channelId");
+    if (Number.isNaN(testDays)) {
+      return badRequest("Test days must be a number");
+    }
 
-    if (!channelId || typeof channelId !== "string") {
-      return badRequest("Channel id is required");
+    const url = new URL(videoUrl);
+
+    const urlSearchParams = url.searchParams;
+    const videoId = urlSearchParams.get("v");
+
+    if (!videoId) {
+      return badRequest("Choose a valid youtube video");
+    }
+
+    const videoChannelId = await getChannelIdOfVideo(videoId);
+
+    if (!videoChannelId) {
+      console.log({ videoChannelId });
+      return badRequest("Choose a valid youtube video");
+    }
+
+    const youtubeAccount = await prisma.youtubeAccount.findUnique({
+      where: {
+        userId_channelId: { channelId: videoChannelId, userId: userId },
+      },
+    });
+
+    if (youtubeAccount === null) {
+      return badRequest("Chosen video is not connected to any of your account");
     }
 
     const thumbnailJob = await prisma.thumbnailJob.create({
@@ -179,7 +214,7 @@ export const action: ActionFunction = async ({ request }) => {
         currentDay: 0,
         youtubeAccount: {
           connect: {
-            userId_channelId: { userId: userId, channelId: channelId },
+            accountId: youtubeAccount.accountId,
           },
         },
         user: { connect: { userId: userId } },
@@ -270,8 +305,30 @@ const NoAccountConnected = ({ googleAuthUrl }: NoAccountConnectedProps) => {
 };
 
 const AccountCreatedButNoJobsCreated = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const actionData = useActionData<string | unknown>();
+
+  const transition = useTransition();
+
+  const [prevIsReloadingDueToAction, setPrevIsReloadingDueToAction] =
+    useState(false);
+
+  const isReloadingDueToAction = transition.type === "actionReload";
+
+  if (prevIsReloadingDueToAction !== isReloadingDueToAction) {
+    if (!prevIsReloadingDueToAction && typeof actionData !== "string") {
+      setModalOpen(false);
+    }
+    console.log(prevIsReloadingDueToAction, isReloadingDueToAction);
+    setPrevIsReloadingDueToAction(isReloadingDueToAction);
+  }
+
+  const onOpenChange = (open: boolean) => {
+    setModalOpen(open);
+  };
+
   return (
-    <Dialog.Root>
+    <Dialog.Root onOpenChange={onOpenChange} open={modalOpen}>
       <div className="flex flex-col gap-y-4 items-center">
         <h3 className="text-xl text-center">
           No A/B Testing has been created. Click to get started
@@ -335,9 +392,9 @@ const AccountCreatedButNoJobsCreated = () => {
                     Choose thumbnails
                   </label>
                   <div className="flex flex-col gap-y-2">
-                    <FileInput name="thumbnails-1" />
-                    <FileInput name="thumbnails-2" />
-                    <FileInput name="thumbnails-3" />
+                    <FileInput name="thumbnails" />
+                    <FileInput name="thumbnails" />
+                    <FileInput name="thumbnails" />
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -346,7 +403,6 @@ const AccountCreatedButNoJobsCreated = () => {
                   </Dialog.Close>
                   <button
                     className="px-4 py-2 bg-gray-700 text-white rounded-md"
-                    form="add-test-form"
                     name="actionType"
                     value={validActionType.addTest}
                   >
