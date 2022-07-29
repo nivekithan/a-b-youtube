@@ -59,9 +59,23 @@ model Thumbnails {
 
   user    User         @relation(fields: [userId], references: [userId])
   job     ThumbnailJob @relation(fields: [jobId], references: [jobId])
+  result ThumbnailResult[]
   videoId String // yotube video id
   contentType String
 
   jobId  Int
   userId String
+}
+
+
+model ThumbnailResult {
+  id Int @id @unique @default(autoincrement())
+
+  thumbnail Thumbnails @relation(fields: [thumbnailId], references: [fileId])
+  clickThroughRate Float
+  averageViewDuration Float
+  at DateTime
+
+  thumbnailId String
+
 }

@@ -1,8 +1,12 @@
+import type { ThumbnailJob, Thumbnails, YoutubeAccount } from "@prisma/client";
+import { google } from "googleapis";
 import { z } from "zod";
 import { prisma } from "~/db.server";
 import { ThumbnailQueue } from "~/server/bull.server";
 import { badRequest } from "~/server/utils.server";
+import { getGoogleOAuthClient } from "./google.server";
 import { getChannelIdOfVideo } from "./videos.server";
+import { ifNeededRefreshToken } from "./youtubeAccount.server";
 
 export type CreateAbTestArgs = {
   formData: FormData;
@@ -115,4 +119,142 @@ export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
       },
     }
   );
+};
+
+export type GetAbTestResultArgs = {
+  thumbnailJob: ThumbnailJob;
+  youtubeAccount: YoutubeAccount;
+  thumbnail: Thumbnails;
+  date: string;
+};
+
+export const setAbTestResult = async ({
+  thumbnailJob,
+  youtubeAccount,
+  thumbnail,
+  date,
+}: GetAbTestResultArgs) => {
+  try {
+    await ifNeededRefreshToken(youtubeAccount);
+
+    const googleAuthClient = getGoogleOAuthClient();
+
+    googleAuthClient.setCredentials({
+      access_token: youtubeAccount.oauthToken,
+    });
+
+    const apiResult = await google.youtubeAnalytics("v2").reports.query({
+      auth: googleAuthClient,
+      dimensions: "day",
+      metrics: "annotationClickThroughRate,averageViewDuration",
+      startDate: date,
+      endDate: date,
+      ids: `channel=${youtubeAccount.channelId}`,
+      filters: `video=${thumbnailJob.videoId}`,
+    });
+
+    if (apiResult.data.errors) {
+      return setAbResultForThumbnail({
+        thumbnail,
+        averageViewDuration: 0,
+        clickThroughRate: 0,
+        date: new Date(date),
+      });
+    }
+
+    const headerRow = apiResult.data.columnHeaders;
+    const firstRow = apiResult.data.rows?.[0];
+
+    if (
+      firstRow === undefined ||
+      firstRow.length === 0 ||
+      headerRow === undefined
+    ) {
+      return setAbResultForThumbnail({
+        thumbnail,
+        averageViewDuration: 0,
+        clickThroughRate: 0,
+        date: new Date(date),
+      });
+    }
+
+    const parsedTestData = retriveAbTestResult(headerRow, firstRow);
+
+    return setAbResultForThumbnail({
+      date: new Date(date),
+      thumbnail,
+      averageViewDuration: parsedTestData.averageViewDuration,
+      clickThroughRate: parsedTestData.clickThroughRate,
+    });
+  } catch (err) {
+    setAbResultForThumbnail({
+      averageViewDuration: 0,
+      clickThroughRate: 0,
+      date: new Date(date),
+      thumbnail,
+    });
+  }
+};
+
+const retriveAbTestResult = (
+  headers: { name?: string | undefined | null }[],
+  row: unknown[]
+) => {
+  const result: { clickThroughRate: number; averageViewDuration: number } = {
+    clickThroughRate: 0,
+    averageViewDuration: 0,
+  };
+
+  headers.forEach((header, i) => {
+    if (header.name === "annotationClickThroughRate") {
+      const headerResult = row[i];
+      const clickThroughRate = z.number().safeParse(headerResult);
+      if (clickThroughRate.success) {
+        result.clickThroughRate = clickThroughRate.data;
+      }
+    } else if (header.name === "averageViewDuration") {
+      const headerResult = row[i];
+      const averageViewDuration = z.number().safeParse(headerResult);
+      if (averageViewDuration.success) {
+        result.averageViewDuration = averageViewDuration.data;
+      }
+    }
+  });
+
+  return result;
+};
+
+export type SetResultForThumbnailArgs = {
+  thumbnail: Thumbnails;
+  clickThroughRate: number;
+  averageViewDuration: number;
+  date: Date;
+};
+
+const setAbResultForThumbnail = async ({
+  averageViewDuration,
+  clickThroughRate,
+  thumbnail,
+  date,
+}: SetResultForThumbnailArgs) => {
+  try {
+    await prisma.thumbnailResult.create({
+      data: {
+        averageViewDuration: averageViewDuration,
+        clickThroughRate: clickThroughRate,
+        thumbnail: { connect: { fileId: thumbnail.fileId } },
+        at: date,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    return;
+  }
+};
+
+export const getAbResultForJob = async (thumbnailJob: ThumbnailJob) => {
+  return prisma.thumbnails.findMany({
+    where: { jobId: thumbnailJob.jobId },
+    include: { result: true },
+  });
 };
