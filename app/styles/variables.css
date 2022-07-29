@@ -80,6 +80,6 @@ body {
 
 .icon{
   display: inline-block;
-  margin-right: 5px;
+  margin-right: 10px;
   transform: translate(0%, 10%);
 }
