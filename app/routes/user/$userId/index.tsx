@@ -12,17 +12,15 @@ import {
 } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { z } from "zod";
-import { prisma } from "~/db.server";
 import { generateGoogleSignUpUrl } from "~/models/google.server";
 import { requireUserId } from "~/models/user.server";
 import { getCountOfConnectedYoutubeAccounts } from "~/models/youtubeAccount.server";
-import { ThumbnailQueue } from "~/server/bull.server";
 import { storeFile } from "~/server/storage.server";
 import { badRequest, encrypt, getEnvVar } from "~/server/utils.server";
 import * as Dialog from "@radix-ui/react-dialog";
 import { FileInput } from "~/components/fileInput";
-import { getChannelIdOfVideo } from "~/models/videos.server";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { createAbtest } from "~/models/abTest.server";
 
 // const ZVideoSchema = z.union([
 //   z.object({
@@ -139,113 +137,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   if (actionType === validActionType.addTest) {
-    const stringifiedThumbnails = formData.getAll("thumbnails");
-
-    if (stringifiedThumbnails.length > 3) {
-      return badRequest("Too many thumbnails");
-    }
-
-    const parsedThumbnails = stringifiedThumbnails.map((thumbnailInStr) => {
-      if (!thumbnailInStr || typeof thumbnailInStr !== "string") {
-        throw badRequest("Thumbnails is required");
-      }
-
-      const ZThumbnailSchema = z.object({
-        id: z.string(),
-        contentType: z.string(),
-      });
-
-      const thumbnails = ZThumbnailSchema.parse(JSON.parse(thumbnailInStr));
-
-      return thumbnails;
-    });
-
-    if (parsedThumbnails.length <= 0) {
-      return badRequest("Thumbnails is required");
-    }
-
-    const videoUrl = formData.get("videoUrl");
-    const testDaysInStr = formData.get("testDays");
-
-    if (!videoUrl || typeof videoUrl !== "string") {
-      return badRequest("Video url is required");
-    }
-
-    if (!testDaysInStr || typeof testDaysInStr !== "string") {
-      return badRequest("Test days is required");
-    }
-
-    const testDays = parseInt(testDaysInStr, 10);
-
-    if (Number.isNaN(testDays)) {
-      return badRequest("Test days must be a number");
-    }
-
-    const url = new URL(videoUrl);
-
-    const urlSearchParams = url.searchParams;
-    const videoId = urlSearchParams.get("v");
-
-    if (!videoId) {
-      return badRequest("Choose a valid youtube video");
-    }
-
-    const videoChannelId = await getChannelIdOfVideo(videoId);
-
-    if (!videoChannelId) {
-      console.log({ videoChannelId });
-      return badRequest("Choose a valid youtube video");
-    }
-
-    const youtubeAccount = await prisma.youtubeAccount.findUnique({
-      where: {
-        userId_channelId: { channelId: videoChannelId, userId: userId },
-      },
-    });
-
-    if (youtubeAccount === null) {
-      return badRequest("Chosen video is not connected to any of your account");
-    }
-
-    const thumbnailJob = await prisma.thumbnailJob.create({
-      data: {
-        videoId: videoId,
-        testDays: testDays,
-        currentDay: 0,
-        youtubeAccount: {
-          connect: {
-            accountId: youtubeAccount.accountId,
-          },
-        },
-        user: { connect: { userId: userId } },
-        thumbnails: {
-          createMany: {
-            data: parsedThumbnails.map((thumbnail) => {
-              return {
-                fileId: thumbnail.id,
-                videoId: videoId,
-                userId: userId,
-                contentType: thumbnail.contentType,
-              };
-            }),
-          },
-        },
-      },
-    });
-
-    const id = thumbnailJob.jobId;
-
-    await ThumbnailQueue.add(
-      `ThumbnailJob`,
-      { id: id },
-      {
-        repeat: {
-          every: 1000 * 60 * 60 * 24,
-          limit: thumbnailJob.testDays,
-          immediately: true,
-        },
-      }
-    );
+    await createAbtest({ formData, userId });
   }
 
   return json({ okay: "okay" });
