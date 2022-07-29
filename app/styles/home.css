@@ -84,11 +84,73 @@
 /**
 *** Home specials ***
 **/
-.home-card-flex{
+.home-card-flex {
   width: 100%;
   flex-direction: column;
   align-items: flex-start;
 }
+
+/*
+*STEP 1*
+*/
+.select-video {
+  width: 100%;
+  flex: 1;
+  padding: 25px 0px;
+  overflow-x: scroll;
+  justify-content: flex-start;
+}
+.select-video-card {
+  height: 100%;
+  min-width: 300px;
+  background-color: var(--black);
+  border-radius: 10px;
+  margin-right: 20px;
+}
+
+/*
+*STEP 2*
+*/
+
+.input-thumbnails-area {
+  width: 100%;
+  flex: 1;
+}
+.input-field-area {
+  height: 100%;
+  width: 40%;
+}
+.input-thumbnail {
+  padding: 30px 0px;
+  width: 100%;
+  height: 100%;
+}
+.input-display-area {
+  height: 100%;
+  width: 60%;
+  padding: 0px 20px;
+  align-items: flex-start;
+  border-left: 1px solid var(--gray);
+  overflow-y: scroll;
+}
+.input-display-cards {
+  max-height: 200px;
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.input-display-card {
+  width: 100%;
+  min-height: 200px;
+  background-color: var(--black);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  transition: all 0.5s smooth;
+}
+
+/*
+*STEP 3*
+*/
 
 .home-conditions {
   width: 100%;
@@ -119,6 +181,6 @@
   outline: none;
   border: 1px solid var(--gray);
 }
-.home-start-button{
+.home-start-button {
   width: 100%;
 }
