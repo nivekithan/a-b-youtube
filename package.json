@@ -6,7 +6,7 @@
     "build": "run-s build:*",
     "build:css": "tailwindcss -m -i ./styles/app.css -o app/styles/app.css",
     "build:remix": "remix build",
-    "dev": "run-p dev:*",
+    "dev": "prisma generate && run-p dev:*",
     "dev:remix": "cross-env NODE_ENV=development binode --require ./mocks -- @remix-run/dev:remix dev",
     "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
     "prisma:seed": "prisma db push --force-reset && prisma db seed",
