@@ -12,7 +12,8 @@ export type EnvVarNames =
   | "SESSION_SECRET"
   | "SIMPLE_CRYPTO_SECRET"
   | "DATABASE_URL"
-  | "NODE_ENV";
+  | "NODE_ENV"
+  | "REDIS_HOST";
 
 export const getEnvVar = (varName: EnvVarNames): string => {
   const envVarValue = process.env[varName];

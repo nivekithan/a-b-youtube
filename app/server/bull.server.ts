@@ -3,12 +3,12 @@ import { QueueScheduler } from "bullmq";
 import { Queue, Worker } from "bullmq";
 import { prisma } from "~/db.server";
 import { changeThumbnail } from "~/models/videos.server";
+import { getEnvVar } from "./utils.server";
 
 const thumbnailQueueName = "thumbanilQueue";
 
 const redisConnectionOptions: QueueOptions["connection"] = {
-  host: "localhost",
-  port: 49153,
+  host: getEnvVar("REDIS_HOST"),
 };
 
 export const ThumbnailQueue = new Queue<{ id: number }>(thumbnailQueueName, {
