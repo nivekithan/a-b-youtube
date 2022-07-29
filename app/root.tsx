@@ -13,6 +13,7 @@ import navbarCss from "./styles/navbar.css";
 import homeCss from "./styles/home.css";
 import videoRecordCss from "./styles/videoRecord.css";
 import listCss from "./styles/list.css";
+import signinCss from "./styles/signin.css";
 import type { LinksFunction } from "@remix-run/server-runtime";
 
 interface DocumentProps {
@@ -66,6 +67,10 @@ export const links: LinksFunction = () => {
     {
       rel: "stylesheet",
       href: videoRecordCss,
+    },
+    {
+      rel: "stylesheet",
+      href: signinCss,
     },
   ];
 };
