@@ -1,16 +1,34 @@
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { z } from "zod";
-import { UserCard } from "~/components/user";
 import { requireUserFromUserId, requireUserId } from "~/models/user.server";
 import type { ClientUser } from "~/zSchemas/zSchema";
 import { ZClientUserSchema } from "~/zSchemas/zSchema";
-import { AiOutlineHome } from "react-icons/ai";
+import { Navbar } from "~/components/navbar";
+import { useEffect, useState } from "react";
 
-const ZLoaderSchema = z.object({ clientUser: ZClientUserSchema });
+const ZLoaderSchema = z.object({
+  clientUser: ZClientUserSchema,
+});
 
 type LoaderData = z.infer<typeof ZLoaderSchema>;
+
+const getActiveNavSection = (userId: string) => {
+  if (typeof window !== "undefined") {
+    const url = window.location.href;
+    const lastPath = new URL(url).pathname.split("/").pop();
+
+    if (lastPath === userId) {
+      return "home";
+    } else if (lastPath === "results" || lastPath?.startsWith("record")) {
+      return "results";
+    } else if (lastPath === "settings") {
+      return "settings";
+    }
+  }
+  return "home";
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request, "/");
@@ -22,7 +40,9 @@ export const loader: LoaderFunction = async ({ request }) => {
     pictureUrl: user.pictureUrl,
   };
 
-  return json<LoaderData>({ clientUser: clientUser });
+  return json<LoaderData>({
+    clientUser: clientUser,
+  });
 };
 
 const useZLoaderData = (): LoaderData => {
@@ -33,29 +53,22 @@ const useZLoaderData = (): LoaderData => {
 export default function RenderUserPage() {
   const loaderData = useZLoaderData();
 
+  const [activeState, setActiveState] = useState<
+    "home" | "results" | "settings" | ""
+  >("");
+
+  useEffect(() => {
+    const activeSection = getActiveNavSection(loaderData.clientUser.userId);
+
+    if (activeSection !== activeState) {
+      setActiveState(activeSection);
+    }
+  });
+
   return (
-    <div className="flex">
-      <div className="min-h-screen border-r border-black flex flex-col gap-y-2">
-        <UserCard clientUser={loaderData.clientUser} />
-        <Link
-          className="flex gap-x-2 items-bottom px-3 py-2 text-gray-500"
-          to={`/user/${loaderData.clientUser.userId}`}
-        >
-          <AiOutlineHome size="25px" />
-          <span className="text-lg mt-[0.125rem]">Home</span>
-        </Link>
-        <div className="grid place-items-center">
-          <Link
-            to="/logout"
-            className="border-[2px] border-gray-600  text-gray-600 px-12 py-2 rounded-md"
-          >
-            Logout
-          </Link>
-        </div>
-      </div>
-      <div className="flex-grow">
-        <Outlet />
-      </div>
+    <div className="App flex">
+      <Navbar active={activeState} />
+      <Outlet />
     </div>
   );
 }

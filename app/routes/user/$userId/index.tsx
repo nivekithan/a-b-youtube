@@ -1,9 +1,3 @@
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useTransition,
-} from "@remix-run/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { unstable_createMemoryUploadHandler } from "@remix-run/server-runtime";
 import {
@@ -17,10 +11,10 @@ import { requireUserId } from "~/models/user.server";
 import { getCountOfConnectedYoutubeAccounts } from "~/models/youtubeAccount.server";
 import { storeFile } from "~/server/storage.server";
 import { badRequest, encrypt, getEnvVar } from "~/server/utils.server";
-import * as Dialog from "@radix-ui/react-dialog";
-import { FileInput } from "~/components/fileInput";
-import { useState } from "react";
 import { createAbtest } from "~/models/abTest.server";
+import { Home } from "~/components/home";
+import { Form, useLoaderData } from "@remix-run/react";
+import { Navbar } from "~/components/navbar";
 
 // const ZVideoSchema = z.union([
 //   z.object({
@@ -155,157 +149,149 @@ export default function RenderUserHomePage() {
 
   const isAnyThumbnailJobsCreated = loaderData.thumbnailJobs.length !== 0;
 
-  const isAccountCreatedButNoJobsCreated =
-    isAnyAccountConnected && !isAnyThumbnailJobsCreated;
+  // const isAccountCreatedButNoJobsCreated =
+  //   isAnyAccountConnected && !isAnyThumbnailJobsCreated;
 
   return (
-    <div className="h-screen">
-      {!isAnyAccountConnected ? (
-        <div className="h-full grid place-items-center">
-          <NoAccountConnected googleAuthUrl={loaderData.googleAuthUrl} />
-        </div>
-      ) : null}
-
-      {isAccountCreatedButNoJobsCreated ? (
-        <div className="h-full grid place-items-center">
-          <AccountCreatedButNoJobsCreated />
-        </div>
-      ) : null}
-    </div>
+    <>
+      <Form className="hero">
+        <Home />
+      </Form>
+    </>
   );
 }
 
-type NoAccountConnectedProps = {
-  googleAuthUrl: string;
-};
+// type NoAccountConnectedProps = {
+//   googleAuthUrl: string;
+// };
 
-const NoAccountConnected = ({ googleAuthUrl }: NoAccountConnectedProps) => {
-  return (
-    <div className="max-w-lg flex flex-col gap-y-4 items-center">
-      <h3 className="text-xl text-center">
-        No youtube account is connected. Connect now to start testing your
-        thumbnails
-      </h3>
-      <a
-        href={googleAuthUrl}
-        className="bg-gray-700 text-white px-16 py-2 rounded-md"
-      >
-        Connect Your Youtube account
-      </a>
-    </div>
-  );
-};
+// const NoAccountConnected = ({ googleAuthUrl }: NoAccountConnectedProps) => {
+//   return (
+//     <div className="max-w-lg flex flex-col gap-y-4 items-center">
+//       <h3 className="text-xl text-center">
+//         No youtube account is connected. Connect now to start testing your
+//         thumbnails
+//       </h3>
+//       <a
+//         href={googleAuthUrl}
+//         className="bg-gray-700 text-white px-16 py-2 rounded-md"
+//       >
+//         Connect Your Youtube account
+//       </a>
+//     </div>
+//   );
+// };
 
-const AccountCreatedButNoJobsCreated = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const actionData = useActionData<string | unknown>();
+// const AccountCreatedButNoJobsCreated = () => {
+//   const [modalOpen, setModalOpen] = useState(false);
+//   const actionData = useActionData<string | unknown>();
 
-  const transition = useTransition();
+//   const transition = useTransition();
 
-  const [prevIsReloadingDueToAction, setPrevIsReloadingDueToAction] =
-    useState(false);
+//   const [prevIsReloadingDueToAction, setPrevIsReloadingDueToAction] =
+//     useState(false);
 
-  const isReloadingDueToAction = transition.type === "actionReload";
+//   const isReloadingDueToAction = transition.type === "actionReload";
 
-  if (prevIsReloadingDueToAction !== isReloadingDueToAction) {
-    if (!prevIsReloadingDueToAction && typeof actionData !== "string") {
-      setModalOpen(false);
-    }
-    console.log(prevIsReloadingDueToAction, isReloadingDueToAction);
-    setPrevIsReloadingDueToAction(isReloadingDueToAction);
-  }
+//   if (prevIsReloadingDueToAction !== isReloadingDueToAction) {
+//     if (!prevIsReloadingDueToAction && typeof actionData !== "string") {
+//       setModalOpen(false);
+//     }
+//     console.log(prevIsReloadingDueToAction, isReloadingDueToAction);
+//     setPrevIsReloadingDueToAction(isReloadingDueToAction);
+//   }
 
-  const onOpenChange = (open: boolean) => {
-    setModalOpen(open);
-  };
+//   const onOpenChange = (open: boolean) => {
+//     setModalOpen(open);
+//   };
 
-  return (
-    <Dialog.Root onOpenChange={onOpenChange} open={modalOpen}>
-      <div className="flex flex-col gap-y-4 items-center">
-        <h3 className="text-xl text-center">
-          No A/B Testing has been created. Click to get started
-        </h3>
-        <Dialog.Trigger
-          className="bg-gray-700 text-white px-16 py-2 rounded-md"
-          type="button"
-        >
-          Start A/B Testing
-        </Dialog.Trigger>
-        <Dialog.Portal>
-          <Dialog.Overlay className="bg-black top-0 left-0 right-0 bottom-0 fixed bg-opacity-50 grid place-items-center">
-            <Dialog.Content className="min-w-[540px] border-2 rounded-md bg-white border-gray-200 flex flex-col gap-y-6 pb-4">
-              <Dialog.Title className="bg-gray-200 px-10 py-6 font-bold  rounded-md">
-                Start A/B Testing your thumbnails
-              </Dialog.Title>
-              <Form
-                method="post"
-                encType="multipart/form-data"
-                className=" px-10 flex flex-col gap-y-8 mt-2"
-                id="add-test-form"
-              >
-                {/* URL input */}
-                <div className="flex flex-col gap-y-3">
-                  <label className="text-gray-700" htmlFor="videoUrl">
-                    Url of your video
-                  </label>
-                  <div className="flex flex-col gap-y-2">
-                    <input
-                      id="videoUrl"
-                      name="videoUrl"
-                      type="url"
-                      placeholder="Url to your video"
-                      className="border border-black py-2 px-3 rounded-md"
-                    />
-                  </div>
-                </div>
-                {/* Test days input */}
-                <div className="flex justify-between items-center">
-                  <label
-                    htmlFor="testDays"
-                    className="text-gray-700 max-w-[150px]"
-                  >
-                    Number of days test should happen
-                  </label>
-                  <div className="flex  rounded-md border-gray-300 border-[3px] focus:border-gray-600">
-                    <input
-                      id="testDays"
-                      type="text"
-                      name="testDays"
-                      className="px-4 py-2 w-[70px] focus:outline-none"
-                    />
-                    <div className="bg-gray-300 grid place-items-center px-2 text-gray-700 text-sm font-light">
-                      days
-                    </div>
-                  </div>
-                </div>
-                {/* Thumbnails Input */}
-                <div className="flex flex-col gap-y-3">
-                  <label className="text-gray-700" htmlFor="thumbnails">
-                    Choose thumbnails
-                  </label>
-                  <div className="flex flex-col gap-y-2">
-                    <FileInput name="thumbnails" />
-                    <FileInput name="thumbnails" />
-                    <FileInput name="thumbnails" />
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <Dialog.Close className="text-sm text-gray-400 text-light hover:underline">
-                    Close the modal
-                  </Dialog.Close>
-                  <button
-                    className="px-4 py-2 bg-gray-700 text-white rounded-md"
-                    name="actionType"
-                    value={validActionType.addTest}
-                  >
-                    Start Testing
-                  </button>
-                </div>
-              </Form>
-            </Dialog.Content>
-          </Dialog.Overlay>
-        </Dialog.Portal>
-      </div>
-    </Dialog.Root>
-  );
-};
+//   return (
+//     <Dialog.Root onOpenChange={onOpenChange} open={modalOpen}>
+//       <div className="flex flex-col gap-y-4 items-center">
+//         <h3 className="text-xl text-center">
+//           No A/B Testing has been created. Click to get started
+//         </h3>
+//         <Dialog.Trigger
+//           className="bg-gray-700 text-white px-16 py-2 rounded-md"
+//           type="button"
+//         >
+//           Start A/B Testing
+//         </Dialog.Trigger>
+//         <Dialog.Portal>
+//           <Dialog.Overlay className="bg-black top-0 left-0 right-0 bottom-0 fixed bg-opacity-50 grid place-items-center">
+//             <Dialog.Content className="min-w-[540px] border-2 rounded-md bg-white border-gray-200 flex flex-col gap-y-6 pb-4">
+//               <Dialog.Title className="bg-gray-200 px-10 py-6 font-bold  rounded-md">
+//                 Start A/B Testing your thumbnails
+//               </Dialog.Title>
+//               <Form
+//                 method="post"
+//                 encType="multipart/form-data"
+//                 className=" px-10 flex flex-col gap-y-8 mt-2"
+//                 id="add-test-form"
+//               >
+//                 {/* URL input */}
+//                 <div className="flex flex-col gap-y-3">
+//                   <label className="text-gray-700" htmlFor="videoUrl">
+//                     Url of your video
+//                   </label>
+//                   <div className="flex flex-col gap-y-2">
+//                     <input
+//                       id="videoUrl"
+//                       name="videoUrl"
+//                       type="url"
+//                       placeholder="Url to your video"
+//                       className="border border-black py-2 px-3 rounded-md"
+//                     />
+//                   </div>
+//                 </div>
+//                 {/* Test days input */}
+//                 <div className="flex justify-between items-center">
+//                   <label
+//                     htmlFor="testDays"
+//                     className="text-gray-700 max-w-[150px]"
+//                   >
+//                     Number of days test should happen
+//                   </label>
+//                   <div className="flex  rounded-md border-gray-300 border-[3px] focus:border-gray-600">
+//                     <input
+//                       id="testDays"
+//                       type="text"
+//                       name="testDays"
+//                       className="px-4 py-2 w-[70px] focus:outline-none"
+//                     />
+//                     <div className="bg-gray-300 grid place-items-center px-2 text-gray-700 text-sm font-light">
+//                       days
+//                     </div>
+//                   </div>
+//                 </div>
+//                 {/* Thumbnails Input */}
+//                 <div className="flex flex-col gap-y-3">
+//                   <label className="text-gray-700" htmlFor="thumbnails">
+//                     Choose thumbnails
+//                   </label>
+//                   <div className="flex flex-col gap-y-2">
+//                     <FileInput name="thumbnails" />
+//                     <FileInput name="thumbnails" />
+//                     <FileInput name="thumbnails" />
+//                   </div>
+//                 </div>
+//                 <div className="flex justify-between items-center">
+//                   <Dialog.Close className="text-sm text-gray-400 text-light hover:underline">
+//                     Close the modal
+//                   </Dialog.Close>
+//                   <button
+//                     className="px-4 py-2 bg-gray-700 text-white rounded-md"
+//                     name="actionType"
+//                     value={validActionType.addTest}
+//                   >
+//                     Start Testing
+//                   </button>
+//                 </div>
+//               </Form>
+//             </Dialog.Content>
+//           </Dialog.Overlay>
+//         </Dialog.Portal>
+//       </div>
+//     </Dialog.Root>
+//   );
+// };

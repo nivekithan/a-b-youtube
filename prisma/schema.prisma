@@ -73,7 +73,7 @@ model ThumbnailResult {
 
   thumbnail Thumbnails @relation(fields: [thumbnailId], references: [fileId])
   clickThroughRate Float
-  averageViewDuration Float
+  averageViewDuration Float 
   at DateTime
 
   thumbnailId String

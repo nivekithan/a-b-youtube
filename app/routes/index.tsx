@@ -4,18 +4,8 @@ import { redirect } from "@remix-run/server-runtime";
 import { generateGoogleSignUpUrl } from "~/models/google.server";
 import { getUserId } from "~/models/user.server";
 import { z } from "zod";
-import { Link, useLoaderData } from "@remix-run/react";
-import {
-  Box,
-  Button,
-  Container,
-  Link as MUILink,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { DevAndTestOnly } from "~/components/devAndTestOnly";
-import { SeedUsersType } from "~/../seedData/data";
-import React from "react";
+import { useLoaderData } from "@remix-run/react";
+import { Signin } from "~/components/signin";
 
 const ZLoaderSchema = z.object({ googleAuthUrl: z.string() });
 
@@ -44,58 +34,7 @@ const useZLoaderData = (): LoaderData => {
 export default function RenderHomePage() {
   const loaderData = useZLoaderData();
 
-  return (
-    <Container>
-      <Box className="min-h-screen grid place-items-center">
-        <Stack className="gap-y-4 items-center">
-          <Typography variant="h4" align="center">
-            Welcome to Youtube A/B Testing
-          </Typography>
-          <Typography>
-            Don't have an account?{" "}
-            <MUILink href={loaderData.googleAuthUrl}>sign up for free</MUILink>
-          </Typography>
-          <Typography className="text-sm mt-2 gap-y-2 flex flex-col">
-            <Button
-              component="a"
-              variant="contained"
-              href={loaderData.googleAuthUrl}
-              className="rounded-lg px-20 py-2 normal-case"
-            >
-              Continue with google
-            </Button>
-            <Button
-              component={Link}
-              to="/api/v1/guestLogin"
-              variant="outlined"
-              color="secondary"
-              className="rounded-lg py-2 normal-case"
-            >
-              Continue with guest account
-            </Button>
-          </Typography>
-          <DevAndTestOnly>
-            <Stack direction="row" className="gap-x-2">
-              {((): React.ReactNode => {
-                const usersType = Object.values(SeedUsersType);
-                return usersType.map((userType) => {
-                  const loginSearchParams = new URLSearchParams();
-                  loginSearchParams.set("userType", userType);
-                  const url = `/api/test/login?${loginSearchParams.toString()}`;
-
-                  return (
-                    <MUILink href={url} key={url}>
-                      {userType}
-                    </MUILink>
-                  );
-                });
-              })()}
-            </Stack>
-          </DevAndTestOnly>
-        </Stack>
-      </Box>
-    </Container>
-  );
+  return <Signin googleAuthUrl={loaderData.googleAuthUrl} />;
 }
 
 export const meta: MetaFunction = () => ({
