@@ -33,8 +33,8 @@ const normalizeThumbnailResult = (
     clickThroughRate: result.clickThroughRate,
     averageViewDuration: result.averageViewDuration,
     date: result.createdAt.toISOString(),
-    // img: `/api/v1/file/${thumbnailFileId}`,
-    img: "https://images.unsplash.com/photo-1658901742285-a5cba478b576?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=918&q=80",
+    img: `/api/v1/file/${thumbnailFileId}`,
+    // img: "https://images.unsplash.com/photo-1658901742285-a5cba478b576?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=918&q=80",
     thumbnailId: result.thumbnailId,
     thumbnailResultId: `${result.id}`,
   };

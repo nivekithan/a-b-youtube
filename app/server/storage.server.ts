@@ -2,9 +2,8 @@ import { nanoid } from "nanoid";
 import { Writable } from "node:stream";
 import { createWriteStream } from "node:fs";
 import path from "path";
-import { createReadStream } from "fs";
 import { writeAsyncIterableToWritable } from "@remix-run/node";
-import { d } from "msw/lib/glossary-58eca5a8";
+import { fileFrom } from "node-fetch";
 
 class SizeLimitedWritable extends Writable {
   limit = 2097152;
@@ -48,5 +47,5 @@ export const storeFile = async (fileData: AsyncIterable<Uint8Array>) => {
 
 export const getFileStream = (fileId: string) => {
   const filePath = path.join(__dirname, "..", "storage", fileId);
-  return createReadStream(filePath);
+  return fileFrom(filePath);
 };

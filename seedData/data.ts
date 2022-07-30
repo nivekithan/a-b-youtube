@@ -119,7 +119,7 @@ export const seedThumbnails: Record<
   CURRENT_ACCOUNT: [
     {
       contentType: "image/jpeg",
-      fileId: "fileId:current-account-1",
+      fileId: "fileIdcurrent-account-1",
       jobId: "jobId:current-account-1",
       userId: "userid:current-account",
       videoId: "videoId:current-account-1",
@@ -139,7 +139,7 @@ export const seedThumbnailResult: Record<
       at: "2022-05-01",
       createdAt: new Date(),
       updatedAt: new Date(),
-      thumbnailId: "fileId:current-account-1",
+      thumbnailId: "fileIdcurrent-account-1",
       jobId: "jobId:current-account-1",
     },
   ],
