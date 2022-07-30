@@ -45,6 +45,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   if (!isUserPresent) {
     const userId = nanoid();
+    console.log("Running this wierd function");
     await prisma.user.create({
       data: {
         googleSub: sub,

@@ -1,8 +1,10 @@
 import { json } from "@remix-run/server-runtime";
 import { SimpleCrypto } from "simple-crypto-js";
 
-export const badRequest = <Data = unknown>(data: Data) => {
-  return json(data, { status: 400 });
+export type BadRequest = { errorMessage?: string };
+
+export const badRequest = (msg: string) => {
+  return json({ errorMessage: msg }, { status: 400 });
 };
 
 export type EnvVarNames =

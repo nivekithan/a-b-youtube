@@ -1,9 +1,10 @@
 import { nanoid } from "nanoid";
 import { Writable } from "node:stream";
-import { createWriteStream,  } from "node:fs";
+import { createWriteStream } from "node:fs";
 import path from "path";
 import { createReadStream } from "fs";
 import { writeAsyncIterableToWritable } from "@remix-run/node";
+import { d } from "msw/lib/glossary-58eca5a8";
 
 class SizeLimitedWritable extends Writable {
   limit = 2097152;
@@ -20,6 +21,7 @@ class SizeLimitedWritable extends Writable {
     encoding: BufferEncoding,
     callback: (error?: Error | null | undefined) => void
   ): void {
+    console.log("writing data");
     if (Buffer.isBuffer(chunk)) {
       const newSize = this.currentWrittenSize + chunk.byteLength;
 

@@ -1,4 +1,5 @@
 import type { ThumbnailJob, Thumbnails, YoutubeAccount } from "@prisma/client";
+import { json } from "@remix-run/server-runtime";
 import { google } from "googleapis";
 import { z } from "zod";
 import { prisma } from "~/db.server";
@@ -16,13 +17,17 @@ export type CreateAbTestArgs = {
 export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
   const stringifiedThumbnails = formData.getAll("thumbnails");
 
-  if (stringifiedThumbnails.length > 3) {
-    return badRequest("Too many thumbnails");
+
+  console.log(stringifiedThumbnails);
+  if (stringifiedThumbnails.length === 0) {
+    return badRequest("No thumbnails selected");
   }
 
   const parsedThumbnails = stringifiedThumbnails.map((thumbnailInStr) => {
+    console.log(thumbnailInStr);
+
     if (!thumbnailInStr || typeof thumbnailInStr !== "string") {
-      throw badRequest("Thumbnails is required");
+      throw new Error("Unreachable");
     }
 
     const ZThumbnailSchema = z.object({
@@ -39,7 +44,7 @@ export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
     return badRequest("Thumbnails is required");
   }
 
-  const videoUrl = formData.get("videoUrl");
+  const videoUrl = formData.get("videoLink");
   const testDaysInStr = formData.get("testDays");
 
   if (!videoUrl || typeof videoUrl !== "string") {
@@ -119,6 +124,8 @@ export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
       },
     }
   );
+
+  return json({ jobId: id });
 };
 
 export type GetAbTestResultArgs = {

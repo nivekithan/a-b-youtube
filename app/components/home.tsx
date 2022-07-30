@@ -1,4 +1,5 @@
 import { AiOutlineRight } from "react-icons/ai";
+import { userHomePageActionType } from "~/routes/user/$userId/index";
 
 const StepOne = () => {
   return (
@@ -41,6 +42,7 @@ const StepTwo = () => {
             accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
             multiple
             className="input-thumbnail"
+            name="thumbnails"
           />
         </div>
         <div className="input-display-area">
@@ -67,9 +69,10 @@ const StepThree = () => {
             type="number"
             min="1"
             max="10"
+            name="testDays"
           />
         </div>
-        <div className="flex">
+        {/* <div className="flex">
           <label className="home-condition-label">
             Start after days of publish
           </label>
@@ -79,14 +82,18 @@ const StepThree = () => {
             min="0"
             max="5"
           />
-        </div>
+        </div> */}
       </div>
-      <div className="card-button home-start-button">
+      <button
+        className="card-button home-start-button"
+        name="actionType"
+        value={userHomePageActionType.addTest}
+      >
         Start{" "}
         <div className="icon">
           <AiOutlineRight />
         </div>
-      </div>
+      </button>
     </div>
   );
 };
