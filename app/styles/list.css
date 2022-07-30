@@ -44,3 +44,26 @@
   font-size: 1.1rem;
   margin-right: 25px;
 }
+/*
+ Settings 
+*/
+.setting-channel-active-img img {
+  width: 10vw;
+  height: 10vw;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.setting-channel-img img {
+  width: 7vw;
+  height: 7vw;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.setting-channel-name {
+  margin: 10px 30px;
+  font-size: 1.5rem;
+}
+.setting-add-tilte{
+  font-size: 2rem;
+  color: var(--accent-1);
+}

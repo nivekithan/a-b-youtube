@@ -7,6 +7,7 @@ import type { ClientUser } from "~/zSchemas/zSchema";
 import { ZClientUserSchema } from "~/zSchemas/zSchema";
 import { Navbar } from "~/components/navbar";
 import { useEffect, useState } from "react";
+import { Notification } from "~/components/notification";
 
 const ZLoaderSchema = z.object({
   clientUser: ZClientUserSchema,
@@ -52,6 +53,7 @@ const useZLoaderData = (): LoaderData => {
 
 export default function RenderUserPage() {
   const loaderData = useZLoaderData();
+  // const actionData = useActionData();
 
   const [activeState, setActiveState] = useState<
     "home" | "results" | "settings" | ""
@@ -65,8 +67,16 @@ export default function RenderUserPage() {
     }
   });
 
+  let errLog = ["err01", "err02"];
+
   return (
     <div className="App flex">
+      <div className="notification-panel">
+        <Notification error="Some error" />
+        {/* {errLog.map((err) => {
+          return <Notification prop={err} />;
+        })} */}
+      </div>
       <Navbar active={activeState} userId={loaderData.clientUser.userId} />
       <Outlet />
     </div>

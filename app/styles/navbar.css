@@ -39,3 +39,41 @@
   padding-top: 10px;
   border-top: 1px solid var(--color-li);
 }
+/* 
+ Notification 
+ */
+.notification-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 20px;
+  font-size: 1rem;
+  z-index: 100;
+}
+.notification {
+  width: 25vw;
+  background-color: var(--color);
+  border-left: 5px solid var(--accent-o);
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  justify-content: flex-start;
+  border-radius: 0px 10px 10px 0px;
+}
+.notification-text {
+  flex: 1;
+}
+.notification-icon {
+  color: var(--accent-o);
+  margin-right: 20px;
+  transform: scale(1.5) translateY(10%);
+}
+.notification-cancel {
+  cursor: pointer;
+  color: var(--white);
+  border: none;
+  outline: none;
+  background: transparent;
+}
+.notification-cancel:hover {
+  color: var(--accent-o);
+}
