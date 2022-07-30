@@ -16,28 +16,32 @@ const data = [
   },
 ];
 
-export const Results = () => {
+export type ResultsProps = {
+  results: { jobId: string; title: string; img: string; daysLeft: number }[];
+};
+
+export const Results = ({ results }: ResultsProps) => {
   return (
     <div className="hero">
       <div className="list-main flex">
         <div className="list-heading">Test Results</div>
         <div className="list-items">
-          {data.map((el) => {
+          {results.map((res) => {
             return (
-              <div key={el.title} className="list-item flex">
+              <div key={res.title} className="list-item flex">
                 <div className="flex">
-                  <img src={el.img} alt="videos" className="list-item-image" />
-                  <div className="list-item-title">{el.title}</div>
+                  <img src={res.img} alt="videos" className="list-item-image" />
+                  <div className="list-item-title">{res.title}</div>
                 </div>
                 <div className="flex">
-                  {el.daysLeft === 0 ? (
+                  {res.daysLeft === 0 ? (
                     <div className="list-status-complete">Completed</div>
                   ) : (
                     <div className="list-status-ongoing">
-                      {el.daysLeft} days left
+                      {res.daysLeft} days left
                     </div>
                   )}
-                  <Link to={`../record?jobId=${el.jobId}`}>
+                  <Link to={`../record?jobId=${res.jobId}`}>
                     <div className="card-button">
                       View Details{" "}
                       <div className="icon">

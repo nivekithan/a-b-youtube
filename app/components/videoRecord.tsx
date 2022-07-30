@@ -64,10 +64,13 @@ const Timeline = () => {
           {data.map((el) => {
             return (
               <div key={el.date} className="card-timeline-item flex">
-                <div className="card-timeline-item-clicks">{el.clickThroughRate}</div>
+                <div className="card-timeline-item-clicks">
+                  {el.clickThroughRate}
+                </div>
                 <div className="card-timeline-item-date">{el.date}</div>
                 <div className="card-timeline-item-stats">
-                  {((el.clickThroughRate / midean - 1) * 100).toFixed(2)}% from midean
+                  {((el.clickThroughRate / midean - 1) * 100).toFixed(2)}% from
+                  midean
                 </div>
                 <div className="card-timeline-item-gradient"></div>
                 <div className="card-timeline-item-image-gradient"></div>

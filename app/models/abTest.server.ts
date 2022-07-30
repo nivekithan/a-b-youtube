@@ -17,7 +17,6 @@ export type CreateAbTestArgs = {
 export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
   const stringifiedThumbnails = formData.getAll("thumbnails");
 
-
   console.log(stringifiedThumbnails);
   if (stringifiedThumbnails.length === 0) {
     return badRequest("No thumbnails selected");

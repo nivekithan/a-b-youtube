@@ -117,7 +117,7 @@ const useZLoaderData = (): LoaderData => {
 };
 
 export default function RenderUserHomePage() {
-  const loaderData = useZLoaderData();
+  // const loaderData = useZLoaderData();
   const transition = useTransition();
   const formRef = useRef<HTMLFormElement | null>(null);
   const actionData = useActionData<BadRequest>();
@@ -126,7 +126,6 @@ export default function RenderUserHomePage() {
 
   useEffect(() => {
     if (!isCreatingTest) {
-      console.log(actionData);
       if (!actionData?.errorMessage) {
         formRef.current?.reset();
       }

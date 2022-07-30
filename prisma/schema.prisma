@@ -10,7 +10,6 @@ generator client {
 }
 
 model User {
-
   userId          String           @id @unique
   name            String           @db.Text
   googleSub       String           @unique @db.VarChar(255)
@@ -33,21 +32,25 @@ model YoutubeAccount {
   expiresIn                 DateTime
   jobs                      ThumbnailJob[]
 
-
   userId String
 
   @@unique([userId, channelId])
 }
 
 model ThumbnailJob {
-  jobId Int @id @unique @default(autoincrement())
+  jobId String @id @unique
 
   user           User           @relation(fields: [userId], references: [userId])
   youtubeAccount YoutubeAccount @relation(fields: [accountId], references: [accountId])
   thumbnails     Thumbnails[]
+  videoName      String         @db.Text
+  thumbnailUrl   String
   testDays       Int
   currentDay     Int            @default(0)
   videoId        String // Youtube video id
+  completed      Boolean        @default(false)
+  updatedAt      DateTime       @updatedAt
+  createdAt      DateTime       @default(now())
 
   userId    String
   accountId Int
@@ -57,25 +60,23 @@ model ThumbnailJob {
 model Thumbnails {
   fileId String @id @unique
 
-  user    User         @relation(fields: [userId], references: [userId])
-  job     ThumbnailJob @relation(fields: [jobId], references: [jobId])
-  result ThumbnailResult[]
-  videoId String // yotube video id
+  user        User              @relation(fields: [userId], references: [userId])
+  job         ThumbnailJob      @relation(fields: [jobId], references: [jobId])
+  result      ThumbnailResult[]
+  videoId     String // yotube video id
   contentType String
 
-  jobId  Int
+  jobId  String
   userId String
 }
-
 
 model ThumbnailResult {
   id Int @id @unique @default(autoincrement())
 
-  thumbnail Thumbnails @relation(fields: [thumbnailId], references: [fileId])
-  clickThroughRate Float
-  averageViewDuration Float 
-  at DateTime
+  thumbnail           Thumbnails @relation(fields: [thumbnailId], references: [fileId])
+  clickThroughRate    Float
+  averageViewDuration Float
+  at                  DateTime
 
   thumbnailId String
-
 }

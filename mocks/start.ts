@@ -4,7 +4,8 @@ import { setupServer } from "msw/lib/node";
 
 config();
 
-const server = setupServer(
+const server =
+  setupServer();
   // rest.get<{}>(/.*/, async (req, res, ctx) => {
   //   const url = req.url;
   //   console.count("Request count");
@@ -18,7 +19,6 @@ const server = setupServer(
   //   console.log(url);
   //   return res(ctx.json("Hello there Post"));
   // })
-);
 
 server.listen({ onUnhandledRequest: "bypass" });
 console.info("🔶 Mock server running");

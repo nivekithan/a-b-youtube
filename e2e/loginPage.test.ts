@@ -32,4 +32,3 @@ test("Logining in as user with no youtube account", async ({ page }) => {
     `http://localhost:3000/user/${SeedUsers.NO_CONNECTED_ACCOUNT.userId}`
   );
 });
-    
