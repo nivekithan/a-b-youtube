@@ -18,6 +18,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   if (typeOfUser === null) throw badRequest("userType is required");
 
+  // /  console.log({ typeOfUser, SeedUsersType });
+
   if (!Object.keys(SeedUsersType).includes(typeOfUser)) {
     throw badRequest("userType is invalid");
   }

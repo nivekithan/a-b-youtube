@@ -67,7 +67,7 @@ export default function RenderUserPage() {
 
   return (
     <div className="App flex">
-      <Navbar active={activeState} />
+      <Navbar active={activeState} userId={loaderData.clientUser.userId} />
       <Outlet />
     </div>
   );

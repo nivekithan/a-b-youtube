@@ -5,9 +5,10 @@ import { Link } from "@remix-run/react";
 
 export type NavbarProps = {
   active: "home" | "results" | "settings" | "";
+  userId: string;
 };
 
-export const Navbar = ({ active }: NavbarProps) => {
+export const Navbar = ({ active, userId }: NavbarProps) => {
   const isHome = active === "home";
   const isResults = active === "results";
   const isSettings = active === "settings";
@@ -18,7 +19,7 @@ export const Navbar = ({ active }: NavbarProps) => {
         <div className="nav-title">Project Name</div>
         <div className="nav-links">
           <div className={isHome ? "nav-link active" : "nav-link"}>
-            <Link to="./">
+            <Link to={`/user/${userId}`}>
               <div className="icon">
                 <MdSpaceDashboard />
               </div>
@@ -26,7 +27,7 @@ export const Navbar = ({ active }: NavbarProps) => {
             </Link>
           </div>
           <div className={isResults ? "nav-link active" : "nav-link"}>
-            <Link to="./results">
+            <Link to={`/user/${userId}/results`}>
               <div className="icon">
                 <FaTasks />
               </div>
@@ -35,7 +36,7 @@ export const Navbar = ({ active }: NavbarProps) => {
           </div>
           {/* <div className="nav-link">Notifications</div> */}
           <div className={isSettings ? "nav-link active" : "nav-link"}>
-            <Link to="./settings">
+            <Link to={`/user/${userId}/settings`}>
               <div className="icon">
                 <MdSettings />
               </div>
