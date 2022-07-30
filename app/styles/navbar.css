@@ -1,38 +1,63 @@
-.nav{
-    height: 100vh;
-    width: 18vw;
-    min-width: 220px;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 20px;
-    border-right: 1px solid var(--color-li);  
+.nav {
+  height: 100vh;
+  width: 18vw;
+  min-width: 220px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  border-right: 1px solid var(--color-li);
 }
-.nav-title{
-    width: 100%;
-    font-size: 1.4rem;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--color-li);
+.nav-title {
+  width: 100%;
+  font-size: 1.4rem;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-li);
 }
-.nav-link{
-    width: 100%;
-    cursor: pointer;
-    color: var(--gray);
-    font-size: 1.1rem;
-    padding: 10px 20px;
+.nav-link {
+  width: 100%;
+  cursor: pointer;
+  color: var(--gray);
+  font-size: 1.1rem;
+  padding: 10px 20px;
 }
-.nav-link.active{
-    color: var(--black);
-    font-size: 1.2rem;
-    font-weight: 700;
-    border-radius: 6px;
-    background: var(--accent-1);
+.nav-link.active {
+  color: var(--black);
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 6px;
+  background: var(--accent-1);
 }
-.nav-bottom{
-    width: 100%;
-    cursor: pointer;
-    text-align: center;
-    font-size: 1.2rem;
-    padding-top: 10px;
-    border-top: 1px solid var(--color-li);
+.nav-bottom {
+  width: 100%;
+  cursor: pointer;
+  text-align: center;
+  font-size: 1.2rem;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-li);
+}
+
+/* 
+*** Notification ***
+ */
+.notification-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 20px;
+  font-size: 1rem;
+}
+.notification {
+  width: 25vw;
+  background-color: var(--color);
+  border-left: 5px solid var(--accent-o);
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  border-radius: 0px 10px 10px 0px;
+}
+.notification-icon {
+  color: var(--accent-o);
+  margin-right: 20px;
+  transform: scale(1.5) translateY(10%);
 }

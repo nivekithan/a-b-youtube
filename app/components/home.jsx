@@ -7,25 +7,17 @@ const StepOne = () => {
       <div className="card-content-header flex">
         <div>
           <div className="card-title">1&nbsp;&nbsp;New A/B Testing</div>
-          <div className="card-subtitle">Select a Video</div>
-        </div>
-        <div className="dlex">
-          <div className="card-subtitle">Or Video Link</div>
-          <input
-            className="home-condition-input"
-            type="url"
-            name="videoLink"
-            id="videoLink"
-          />
         </div>
       </div>
       <div className="select-video flex">
-        <div className="select-video-card"></div>
-        <div className="select-video-card"></div>
-        <div className="select-video-card"></div>
-        <div className="select-video-card"></div>
-        <div className="select-video-card"></div>
-        <div className="select-video-card"></div>
+        <div className="card-title">Enter a youtube video link:</div>
+        <input
+          className="home-condition-input home-link-input"
+          type="url"
+          name="videoLink"
+          id="videoLink"
+          placeholder="https://youtu.be/dQw4w9WgXcQ"
+        />
       </div>
     </div>
   );
@@ -40,14 +32,14 @@ const StepTwo = () => {
           <input
             type="file"
             accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-            multiple="10"
+            multiple
             className="input-thumbnail"
+            id="inputThumbnails"
+            onChange={() => preview()}
           />
         </div>
         <div className="input-display-area">
-          <div className="input-display-cards flex">
-            <div className="input-display-card"></div>
-            <div className="input-display-card"></div>
+          <div className="input-display-cards flex" id="imagePreview">
             <div className="input-display-card"></div>
           </div>
         </div>

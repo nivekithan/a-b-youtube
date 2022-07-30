@@ -96,16 +96,13 @@
 .select-video {
   width: 100%;
   flex: 1;
-  padding: 25px 0px;
-  overflow-x: scroll;
-  justify-content: flex-start;
+  flex-direction: column;
 }
-.select-video-card {
-  height: 100%;
-  min-width: 300px;
-  background-color: var(--black);
-  border-radius: 10px;
-  margin-right: 20px;
+
+.home-link-input{
+  width: 50%;
+  font-size: 1.5rem;
+  margin: 20px;
 }
 
 /*

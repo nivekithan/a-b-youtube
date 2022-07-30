@@ -1,7 +1,7 @@
 import "../styles/navbar.css";
-import { MdSpaceDashboard,MdSettings } from "react-icons/md";
+import { MdSpaceDashboard, MdSettings } from "react-icons/md";
 import { FaTasks } from "react-icons/fa";
-import {GoSignOut} from "react-icons/go"
+import { GoSignOut } from "react-icons/go";
 
 export const Navbar = () => {
   return (

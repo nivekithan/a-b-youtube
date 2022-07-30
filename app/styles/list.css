@@ -19,6 +19,7 @@
   overflow-y: scroll;
 }
 .list-item {
+  width: 100%;
   padding: 20px;
   border-bottom: 1px solid var(--gray);
   justify-content: space-between;
@@ -43,4 +44,33 @@
   color: var(--accent-o);
   font-size: 1.1rem;
   margin-right: 25px;
+}
+
+/*
+** Settings **
+*/
+.setting-active-flex {
+  width: 100%;
+  flex-direction: column;
+  text-align: center;
+}
+.setting-active-status {
+  font-size: 1.2rem;
+  color: var(--accent-1);
+}
+.setting-channel-active-img img {
+  width: 10vw;
+  height: 10vw;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.setting-channel-img img {
+  width: 7vw;
+  height: 7vw;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.setting-channel-name {
+  margin: 10px 30px;
+  font-size: 1.5rem;
 }
