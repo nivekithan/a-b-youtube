@@ -1,9 +1,5 @@
 import { RiErrorWarningFill } from "react-icons/ri";
 
-export type ErrorProps = {
-  results: { err: string }[];
-};
-
 export const Notification = () => {
   const err = "error 101";
 
