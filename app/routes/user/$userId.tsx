@@ -67,16 +67,12 @@ export default function RenderUserPage() {
     }
   });
 
-  let errLog = ["err01", "err02"];
-
   return (
     <div className="App flex">
-      <div className="notification-panel">
+      {/* <div className="notification-panel">
         <Notification error="Some error" />
-        {/* {errLog.map((err) => {
-          return <Notification prop={err} />;
-        })} */}
-      </div>
+    
+      </div> */}
       <Navbar active={activeState} userId={loaderData.clientUser.userId} />
       <Outlet />
     </div>
