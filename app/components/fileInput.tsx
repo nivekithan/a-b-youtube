@@ -61,7 +61,7 @@ export const FileInput = ({ name, withMessageUrls }: FileInputProps) => {
     <div>
       <input
         type="file"
-        accept="image/jpg"
+        accept="image/jpeg"
         multiple
         hidden
         name={name}

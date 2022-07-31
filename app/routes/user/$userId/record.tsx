@@ -4,7 +4,7 @@ import type { LoaderFunction } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { z } from "zod";
-import { VideoRecord } from "~/components/videoRecord";
+import { ClickGraphProps, VideoRecord } from "~/components/videoRecord";
 import { prisma } from "~/db.server";
 import { requireUserId } from "~/models/user.server";
 import { format } from "date-fns";
@@ -91,10 +91,11 @@ export default function RenderVideoRecord() {
 
   const thumbnailMap = new Map<string, number>();
 
-  let maxThumbnailValue = 0;
+  let maxThumbnailScore = 0;
   let bestThumbnailResult = null as null | RouteLoaderData["results"][number];
 
   let totalScore = 0;
+  const clickGraphData: ClickGraphProps["data"] = [];
 
   const thumbnailsWithFormatedDate = loaderData.results.map((res) => {
     const withFormatedDate = {
@@ -104,22 +105,27 @@ export default function RenderVideoRecord() {
 
     const score = res.clickThroughRate * res.averageViewDuration;
     totalScore += score;
+    clickGraphData.unshift({
+      date: format(new Date(res.date), "do LLLL"),
+      id: withFormatedDate.thumbnailId,
+      score,
+    });
 
     if (thumbnailMap.has(res.thumbnailId)) {
       const value = thumbnailMap.get(res.thumbnailId)!;
 
-      const newValue = value + score;
-      thumbnailMap.set(res.thumbnailId, newValue);
-      if (newValue > maxThumbnailValue) {
-        maxThumbnailValue = newValue;
+      const newScore = value + score;
+      thumbnailMap.set(res.thumbnailId, newScore);
+      if (newScore > maxThumbnailScore) {
+        maxThumbnailScore = newScore;
         bestThumbnailResult = { ...withFormatedDate };
       }
     } else {
       const newValue = score;
       thumbnailMap.set(res.thumbnailId, newValue);
 
-      if (newValue > maxThumbnailValue) {
-        maxThumbnailValue = newValue;
+      if (newValue > maxThumbnailScore) {
+        maxThumbnailScore = newValue;
         bestThumbnailResult = { ...withFormatedDate };
       }
     }
@@ -143,6 +149,10 @@ export default function RenderVideoRecord() {
           ? { type: "notAvaliable" }
           : { type: "avaliable", ...bestThumbnailResult }
       }
+      clickGraphProps={{
+        data: clickGraphData,
+        maxScore: maxThumbnailScore,
+      }}
     />
   );
 }

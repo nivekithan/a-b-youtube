@@ -1,15 +1,20 @@
 node_modules
 
-/build
-/public/build
 .env
 redis.env
 prod.env
 
+.github
+
+/e2e
+/mocks
 /planent-scale
+/seedData
+/test
 
 /cypress/screenshots
 /cypress/videos
+
 /prisma/data.db
 /prisma/data.db-journal
 
