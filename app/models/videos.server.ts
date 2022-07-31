@@ -117,9 +117,7 @@ export const changeThumbnail = async ({
   });
 };
 
-export const getChannelIdOfVideo = async (
-  videoId: string
-): Promise<string | null> => {
+export const getInfoOfVideo = async (videoId: string) => {
   try {
     const channel = await google.youtube("v3").videos.list({
       id: [videoId],
@@ -130,12 +128,20 @@ export const getChannelIdOfVideo = async (
     const singleVideoItem = channel.data.items?.[0];
 
     const ZVideoSchema = z.object({
-      snippet: z.object({ channelId: z.string() }),
+      snippet: z.object({
+        channelId: z.string(),
+        title: z.string(),
+        thumbnails: z.object({ default: z.object({ url: z.string() }) }),
+      }),
     });
 
     const singleVideo = ZVideoSchema.parse(singleVideoItem);
 
-    return singleVideo.snippet.channelId;
+    return {
+      channelId: singleVideo.snippet.channelId,
+      videoName: singleVideo.snippet.title,
+      thumbnailUrl: singleVideo.snippet.thumbnails.default.url,
+    };
   } catch (err) {
     console.error(err);
     return null;

@@ -1,9 +1,8 @@
-import type { MutableRefObject } from "react";
 import React, { useRef, useState } from "react";
 
 export type FileInputProps = {
   name: string;
-  setUploads: Function;
+  // setUploads: Function;
 };
 
 // const getSelectedFileName = (
@@ -18,7 +17,7 @@ export type FileInputProps = {
 //   return null;
 // };
 
-export const FileInput = ({ name, setUploads }: FileInputProps) => {
+export const FileInput = ({ name }: FileInputProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [_, doReRender] = useState({});
@@ -31,31 +30,33 @@ export const FileInput = ({ name, setUploads }: FileInputProps) => {
 
   const onFileInput = () => {
     const files = fileInputRef.current?.files;
-    setUploads(files)
+    // setUploads(files);
     doReRender({});
   };
 
   const onButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
+    fileInputRef.current?.click();
+
     // if (!isFileSelected) {
     //   fileInputRef.current?.click();
     //   return;
     // }
 
-    const files = fileInputRef.current?.files;
+    // const files = fileInputRef.current?.files;
 
-    if (files === null || files === undefined) {
-      return;
-    }
+    // if (files === null || files === undefined) {
+    //   return;
+    // }
 
-    const fileInput = fileInputRef.current;
-    if (fileInput === null) {
-      return null;
-    }
+    // const fileInput = fileInputRef.current;
+    // if (fileInput === null) {
+    //   return null;
+    // }
 
-    fileInput.files = new DataTransfer().files;
-    doReRender({});
+    // fileInput.files = new DataTransfer().files;
+    // doReRender({});
   };
 
   return (
@@ -70,6 +71,7 @@ export const FileInput = ({ name, setUploads }: FileInputProps) => {
         ref={fileInputRef}
       />
       <button
+        type="button"
         onClick={onButtonClick}
         className="home-input-file-button card-button"
       >

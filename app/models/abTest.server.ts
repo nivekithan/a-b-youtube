@@ -1,12 +1,14 @@
 import type { ThumbnailJob, Thumbnails, YoutubeAccount } from "@prisma/client";
 import { json } from "@remix-run/server-runtime";
+import { format } from "date-fns";
 import { google } from "googleapis";
+import { nanoid } from "nanoid";
 import { z } from "zod";
 import { prisma } from "~/db.server";
 import { ThumbnailQueue } from "~/server/bull.server";
 import { badRequest } from "~/server/utils.server";
 import { getGoogleOAuthClient } from "./google.server";
-import { getChannelIdOfVideo } from "./videos.server";
+import { getInfoOfVideo } from "./videos.server";
 import { ifNeededRefreshToken } from "./youtubeAccount.server";
 
 export type CreateAbTestArgs = {
@@ -66,15 +68,17 @@ export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
     return badRequest("Choose a valid youtube video");
   }
 
-  const videoChannelId = await getChannelIdOfVideo(videoId);
+  const videoInfo = await getInfoOfVideo(videoId);
 
-  if (!videoChannelId) {
+  if (!videoInfo) {
     return badRequest("Choose a valid youtube video");
   }
 
+  const { channelId, thumbnailUrl, videoName } = videoInfo;
+
   const youtubeAccount = await prisma.youtubeAccount.findUnique({
     where: {
-      userId_channelId: { channelId: videoChannelId, userId: userId },
+      userId_channelId: { channelId: channelId, userId: userId },
     },
   });
 
@@ -84,6 +88,9 @@ export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
 
   const thumbnailJob = await prisma.thumbnailJob.create({
     data: {
+      jobId: nanoid(),
+      thumbnailUrl: thumbnailUrl,
+      videoName: videoName,
       videoId: videoId,
       testDays: testDays,
       currentDay: 0,
@@ -156,12 +163,15 @@ export const setAbTestResult = async ({
       filters: `video=${thumbnailJob.videoId}`,
     });
 
+    const jobId = thumbnail.jobId;
+
     if (apiResult.data.errors) {
       return setAbResultForThumbnail({
         thumbnail,
         averageViewDuration: 0,
         clickThroughRate: 0,
         date: new Date(date),
+        jobId: jobId,
       });
     }
 
@@ -178,6 +188,7 @@ export const setAbTestResult = async ({
         averageViewDuration: 0,
         clickThroughRate: 0,
         date: new Date(date),
+        jobId: jobId,
       });
     }
 
@@ -188,6 +199,7 @@ export const setAbTestResult = async ({
       thumbnail,
       averageViewDuration: parsedTestData.averageViewDuration,
       clickThroughRate: parsedTestData.clickThroughRate,
+      jobId: jobId,
     });
   } catch (err) {
     setAbResultForThumbnail({
@@ -195,6 +207,7 @@ export const setAbTestResult = async ({
       clickThroughRate: 0,
       date: new Date(date),
       thumbnail,
+      jobId: thumbnail.jobId,
     });
   }
 };
@@ -232,12 +245,14 @@ export type SetResultForThumbnailArgs = {
   clickThroughRate: number;
   averageViewDuration: number;
   date: Date;
+  jobId: string;
 };
 
 const setAbResultForThumbnail = async ({
   averageViewDuration,
   clickThroughRate,
   thumbnail,
+  jobId,
   date,
 }: SetResultForThumbnailArgs) => {
   try {
@@ -246,7 +261,8 @@ const setAbResultForThumbnail = async ({
         averageViewDuration: averageViewDuration,
         clickThroughRate: clickThroughRate,
         thumbnail: { connect: { fileId: thumbnail.fileId } },
-        at: date,
+        at: format(date, "YYYY-MM-DD"),
+        thumbnailJob: { connect: { jobId: jobId } },
       },
     });
   } catch (err) {

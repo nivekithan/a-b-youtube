@@ -11,11 +11,11 @@ const redisConnectionOptions: QueueOptions["connection"] = {
   host: getEnvVar("REDIS_HOST"),
 };
 
-export const ThumbnailQueue = new Queue<{ id: number }>(thumbnailQueueName, {
+export const ThumbnailQueue = new Queue<{ id: string }>(thumbnailQueueName, {
   connection: redisConnectionOptions,
 });
 
-export const ThumbnailWorker = new Worker<{ id: number }, null | string>(
+export const ThumbnailWorker = new Worker<{ id: string }, null | string>(
   thumbnailQueueName,
   async (job) => {
     const jobId = job.data.id;

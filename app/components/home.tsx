@@ -26,18 +26,18 @@ const StepOne = () => {
 };
 
 const StepTwo = () => {
-  const [uploadedThumbnails, setUploadedThumbnails] = useState({length: 0});
+  // const [uploadedThumbnails, setUploadedThumbnails] = useState({length: 0});
 
-  const showPreview = useRef(false);
+  // const showPreview = useRef(false);
 
-  useEffect(() => {
-    if (uploadedThumbnails.length > 0) {
-      showPreview.current = true;
-    } else {
-      showPreview.current = false;
-    }
-    console.log(uploadedThumbnails)
-  }, [uploadedThumbnails]);
+  // useEffect(() => {
+  //   if (uploadedThumbnails.length > 0) {
+  //     showPreview.current = true;
+  //   } else {
+  //     showPreview.current = false;
+  //   }
+  //   console.log(uploadedThumbnails)
+  // }, [uploadedThumbnails]);
 
   return (
     <div className="card-content home-card-flex flex">
@@ -45,10 +45,10 @@ const StepTwo = () => {
       <div className="card-subtitle">Upto 10 only</div>
       <div className="input-thumbnails-area flex">
         <div className="input-field-area flex">
-          <FileInput name="thumbnails" setUploads={setUploadedThumbnails} />
+          <FileInput name="thumbnails"  />
         </div>
         <div className="input-display-area">
-          <div className="input-display-cards flex">    
+          <div className="input-display-cards flex">
             {/* {showPreview ? (
               uploadedThumbnails.map((el) => {
                 return <div key={el.name} className="input-display-card"><img src={el.file}/></div>;
