@@ -20,7 +20,6 @@ class SizeLimitedWritable extends Writable {
     encoding: BufferEncoding,
     callback: (error?: Error | null | undefined) => void
   ): void {
-    console.log("writing data");
     if (Buffer.isBuffer(chunk)) {
       const newSize = this.currentWrittenSize + chunk.byteLength;
 
@@ -35,7 +34,9 @@ class SizeLimitedWritable extends Writable {
   }
 }
 
-export const storeFile = async (fileData: AsyncIterable<Uint8Array>) => {
+export const storeFile = async (
+  fileData: AsyncIterable<Uint8Array>
+): Promise<string> => {
   const fileId = nanoid();
   const filePath = path.join(__dirname, "..", "storage", fileId);
   const fileWritableStream = createWriteStream(filePath);

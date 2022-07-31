@@ -18,31 +18,31 @@ export const Navbar = ({ active, userId }: NavbarProps) => {
       <div className="nav-top">
         <div className="nav-title">Project Name</div>
         <div className="nav-links">
-          <div className={isHome ? "nav-link active" : "nav-link"}>
-            <Link to={`/user/${userId}`}>
+          <Link to={`/user/${userId}`}>
+            <div className={isHome ? "nav-link active" : "nav-link"}>
               <div className="icon">
                 <MdSpaceDashboard />
               </div>
               Dashboard
-            </Link>
-          </div>
-          <div className={isResults ? "nav-link active" : "nav-link"}>
-            <Link to={`/user/${userId}/results`}>
+            </div>
+          </Link>
+          <Link to={`/user/${userId}/results`}>
+            <div className={isResults ? "nav-link active" : "nav-link"}>
               <div className="icon">
                 <FaTasks />
               </div>
               Results
-            </Link>
-          </div>
+            </div>
+          </Link>
           {/* <div className="nav-link">Notifications</div> */}
-          <div className={isSettings ? "nav-link active" : "nav-link"}>
-            <Link to={`/user/${userId}/settings`}>
+          <Link to={`/user/${userId}/settings`}>
+            <div className={isSettings ? "nav-link active" : "nav-link"}>
               <div className="icon">
                 <MdSettings />
               </div>
               Settings
-            </Link>
-          </div>
+            </div>
+          </Link>
         </div>
       </div>
       <Link to="/logout">

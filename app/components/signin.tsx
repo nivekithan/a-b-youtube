@@ -47,22 +47,22 @@ export const Signin = ({ googleAuthUrl }: SignInProps) => {
       <div className="signin-card flex">
         <div className="signin-card-title">A/B Testing Made Easy</div>
         <div>
-          <div className="signin-card-button">
-            <a href={googleAuthUrl}>
+          <a href={googleAuthUrl}>
+            <div className="signin-card-button">
               <div className="icon">
                 <FaGoogle />
               </div>
               Continue with Google
-            </a>
-          </div>
-          <div className="signin-card-button">
-            <Link to="/api/v1/demo">
+            </div>
+          </a>
+          <Link to="/api/v1/demo">
+            <div className="signin-card-button">
               <div className="icon">
                 <FaUserAlt />
               </div>
               Checkout with demo account
-            </Link>
-          </div>
+            </div>
+          </Link>
         </div>
       </div>
     </div>

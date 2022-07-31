@@ -17,14 +17,11 @@ export type CreateAbTestArgs = {
 export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
   const stringifiedThumbnails = formData.getAll("thumbnails");
 
-  console.log(stringifiedThumbnails);
   if (stringifiedThumbnails.length === 0) {
     return badRequest("No thumbnails selected");
   }
 
   const parsedThumbnails = stringifiedThumbnails.map((thumbnailInStr) => {
-    console.log(thumbnailInStr);
-
     if (!thumbnailInStr || typeof thumbnailInStr !== "string") {
       throw new Error("Unreachable");
     }

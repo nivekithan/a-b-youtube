@@ -40,8 +40,8 @@ model YoutubeAccount {
 model ThumbnailJob {
   jobId String @id @unique
 
-  user           User              @relation(fields: [userId], references: [userId])
-  youtubeAccount YoutubeAccount    @relation(fields: [accountId], references: [accountId])
+  user           User              @relation(fields: [userId], references: [userId], onDelete:  Cascade)
+  youtubeAccount YoutubeAccount    @relation(fields: [accountId], references: [accountId], onDelete: Cascade)
   thumbnails     Thumbnails[]
   results        ThumbnailResult[]
   videoName      String            @db.Text
@@ -61,8 +61,8 @@ model ThumbnailJob {
 model Thumbnails {
   fileId String @id @unique
 
-  user        User              @relation(fields: [userId], references: [userId])
-  job         ThumbnailJob      @relation(fields: [jobId], references: [jobId])
+  user        User              @relation(fields: [userId], references: [userId], onDelete:  Cascade)
+  job         ThumbnailJob      @relation(fields: [jobId], references: [jobId], onDelete:  Cascade)
   result      ThumbnailResult[]
   videoId     String // yotube video id
   contentType String
@@ -74,8 +74,8 @@ model Thumbnails {
 model ThumbnailResult {
   id Int @id @unique @default(autoincrement())
 
-  thumbnail           Thumbnails   @relation(fields: [thumbnailId], references: [fileId])
-  thumbnailJob        ThumbnailJob @relation(fields: [jobId], references: [jobId])
+  thumbnail           Thumbnails   @relation(fields: [thumbnailId], references: [fileId], onDelete:  Cascade)
+  thumbnailJob        ThumbnailJob @relation(fields: [jobId], references: [jobId], onDelete:  Cascade)
   clickThroughRate    Float
   averageViewDuration Float
   at                  String // Format should be YYYY-MM-DD

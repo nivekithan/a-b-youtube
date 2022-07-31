@@ -62,13 +62,14 @@
 .card-button {
   cursor: pointer;
   color: var(--white);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   text-align: center;
   background-color: var(--black);
   padding: 10px 15px;
   border-radius: 5px;
   border: none;
   z-index: 1;
+  transition: all 0.5s ease-in-out;
 }
 .card-button:hover {
   font-weight: 600;
@@ -118,6 +119,10 @@
   height: 100%;
   width: 40%;
 }
+.home-input-file-button{
+  font-size: 1.2rem;
+  margin: 20px;
+}
 .input-thumbnail {
   padding: 30px 0px;
   width: 100%;
@@ -143,7 +148,12 @@
   background-color: var(--black);
   border-radius: 10px;
   margin-bottom: 20px;
-  transition: all 0.5s smooth;
+  object-fit: cover;
+}
+.input-display-card >img{
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
 }
 
 /*

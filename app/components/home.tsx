@@ -1,5 +1,7 @@
+import { useState, useEffect, useRef } from "react";
 import { AiOutlineRight } from "react-icons/ai";
 import { userHomePageActionType } from "~/routes/user/$userId/index";
+import { FileInput } from "./fileInput";
 
 const StepOne = () => {
   return (
@@ -24,25 +26,36 @@ const StepOne = () => {
 };
 
 const StepTwo = () => {
+  const [uploadedThumbnails, setUploadedThumbnails] = useState({length: 0});
+
+  const showPreview = useRef(false);
+
+  useEffect(() => {
+    if (uploadedThumbnails.length > 0) {
+      showPreview.current = true;
+    } else {
+      showPreview.current = false;
+    }
+    console.log(uploadedThumbnails)
+  }, [uploadedThumbnails]);
+
   return (
     <div className="card-content home-card-flex flex">
       <div className="card-title">2&nbsp;&nbsp;Add Thumbnails</div>
       <div className="card-subtitle">Upto 10 only</div>
       <div className="input-thumbnails-area flex">
         <div className="input-field-area flex">
-          <input
-            type="file"
-            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-            multiple
-            className="input-thumbnail"
-            name="thumbnails"
-          />
+          <FileInput name="thumbnails" setUploads={setUploadedThumbnails} />
         </div>
         <div className="input-display-area">
-          <div className="input-display-cards flex">
-            <div className="input-display-card"></div>
-            <div className="input-display-card"></div>
-            <div className="input-display-card"></div>
+          <div className="input-display-cards flex">    
+            {/* {showPreview ? (
+              uploadedThumbnails.map((el) => {
+                return <div key={el.name} className="input-display-card"><img src={el.file}/></div>;
+              })
+            ) : (
+              <div className="input-display-card"></div>
+            )} */}
           </div>
         </div>
       </div>

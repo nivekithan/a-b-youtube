@@ -15,16 +15,18 @@
   border-bottom: 1px solid var(--color-li);
 }
 .nav-link {
-  margin: 20px 0px;
-}
-.nav-link > a {
   width: 100%;
   cursor: pointer;
   color: var(--gray);
   font-size: 1.1rem;
   padding: 10px 20px;
+  margin: 20px 0px;
 }
-.nav-link.active > a {
+.nav-link:hover {
+  color: var(--white);
+}
+
+.nav-link.active {
   color: var(--black);
   font-size: 1.2rem;
   font-weight: 700;
