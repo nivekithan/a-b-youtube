@@ -122,8 +122,11 @@ export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
     { id: id },
     {
       repeat: {
-        every: 1000 * 60 * 60 * 24,
+        // cron: "10 0 * * *",
+        // tz: "America/Los_Angeles",
+        every: 1_000,
         limit: thumbnailJob.testDays,
+        immediately: true,
       },
     }
   );
@@ -170,7 +173,7 @@ export const setAbTestResult = async ({
         thumbnail,
         averageViewDuration: 0,
         clickThroughRate: 0,
-        date: new Date(date),
+        date: date,
         jobId: jobId,
       });
     }
@@ -187,7 +190,7 @@ export const setAbTestResult = async ({
         thumbnail,
         averageViewDuration: 0,
         clickThroughRate: 0,
-        date: new Date(date),
+        date: date,
         jobId: jobId,
       });
     }
@@ -195,7 +198,7 @@ export const setAbTestResult = async ({
     const parsedTestData = retriveAbTestResult(headerRow, firstRow);
 
     return setAbResultForThumbnail({
-      date: new Date(date),
+      date: date,
       thumbnail,
       averageViewDuration: parsedTestData.averageViewDuration,
       clickThroughRate: parsedTestData.clickThroughRate,
@@ -205,7 +208,7 @@ export const setAbTestResult = async ({
     setAbResultForThumbnail({
       averageViewDuration: 0,
       clickThroughRate: 0,
-      date: new Date(date),
+      date: date,
       thumbnail,
       jobId: thumbnail.jobId,
     });
@@ -244,7 +247,7 @@ export type SetResultForThumbnailArgs = {
   thumbnail: Thumbnails;
   clickThroughRate: number;
   averageViewDuration: number;
-  date: Date;
+  date: string;
   jobId: string;
 };
 
@@ -261,7 +264,7 @@ const setAbResultForThumbnail = async ({
         averageViewDuration: averageViewDuration,
         clickThroughRate: clickThroughRate,
         thumbnail: { connect: { fileId: thumbnail.fileId } },
-        at: format(date, "YYYY-MM-DD"),
+        at: date,
         thumbnailJob: { connect: { jobId: jobId } },
       },
     });

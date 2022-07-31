@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { Writable } from "node:stream";
-import { createWriteStream } from "node:fs";
+import { createReadStream, createWriteStream } from "node:fs";
 import path from "path";
 import { writeAsyncIterableToWritable } from "@remix-run/node";
 import { fileFrom } from "node-fetch";
@@ -49,4 +49,9 @@ export const storeFile = async (
 export const getFileStream = (fileId: string) => {
   const filePath = path.join(__dirname, "..", "storage", fileId);
   return fileFrom(filePath);
+};
+
+export const getNodeFileStream = (fileId: string) => {
+  const filePath = path.join(__dirname, "..", "storage", fileId);
+  return createReadStream(filePath);
 };

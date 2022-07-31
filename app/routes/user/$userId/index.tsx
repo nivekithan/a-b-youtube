@@ -128,8 +128,6 @@ export default function RenderUserHomePage() {
     if (!isCreatingTest) {
       if (!actionData?.errorMessage) {
         formRef.current?.reset();
-      } else {
-        console.log(actionData.errorMessage);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

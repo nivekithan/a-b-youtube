@@ -2,7 +2,7 @@ import type { ThumbnailJob, Thumbnails, YoutubeAccount } from "@prisma/client";
 import { google } from "googleapis";
 import { z } from "zod";
 import { prisma } from "~/db.server";
-import { getFileStream } from "~/server/storage.server";
+import { getFileStream, getNodeFileStream } from "~/server/storage.server";
 import { getEnvVar } from "~/server/utils.server";
 import { getGoogleOAuthClient } from "./google.server";
 import { ifNeededRefreshToken } from "./youtubeAccount.server";
@@ -95,26 +95,30 @@ export const changeThumbnail = async ({
   thumbnail,
   thumbnailJob,
 }: ChangeThumbnailArgs) => {
-  await ifNeededRefreshToken(account);
+  try {
+    await ifNeededRefreshToken(account);
 
-  const videoId = thumbnailJob.videoId;
+    const videoId = thumbnailJob.videoId;
 
-  const googleAuthClient = getGoogleOAuthClient();
-  googleAuthClient.setCredentials({ access_token: account.oauthToken });
+    const googleAuthClient = getGoogleOAuthClient();
+    googleAuthClient.setCredentials({ access_token: account.oauthToken });
 
-  const thumbnailStream = getFileStream(thumbnail.fileId);
+    const thumbnailStream = getNodeFileStream(thumbnail.fileId);
 
-  await google.youtube("v3").thumbnails.set({
-    auth: googleAuthClient,
-    videoId: videoId,
-    uploadType: thumbnail.contentType,
-    media: { mimeType: thumbnail.contentType, body: thumbnailStream },
-  });
+    await google.youtube("v3").thumbnails.set({
+      auth: googleAuthClient,
+      videoId: videoId,
+      uploadType: thumbnail.contentType,
+      media: { mimeType: thumbnail.contentType, body: thumbnailStream },
+    });
 
-  await prisma.thumbnailJob.update({
-    where: { jobId: thumbnailJob.jobId },
-    data: { currentDay: { increment: 1 } },
-  });
+    await prisma.thumbnailJob.update({
+      where: { jobId: thumbnailJob.jobId },
+      data: { currentDay: { increment: 1 } },
+    });
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const getInfoOfVideo = async (videoId: string) => {

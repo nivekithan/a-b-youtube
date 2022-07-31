@@ -1,7 +1,10 @@
 import type { QueueOptions } from "bullmq";
 import { QueueScheduler } from "bullmq";
 import { Queue, Worker } from "bullmq";
+import { sub } from "date-fns";
+import { formatInTimeZone, utcToZonedTime } from "date-fns-tz";
 import { prisma } from "~/db.server";
+import { setAbTestResult } from "~/models/abTest.server";
 import { changeThumbnail } from "~/models/videos.server";
 import { getEnvVar } from "./utils.server";
 
@@ -31,6 +34,11 @@ export const ThumbnailWorker = new Worker<{ id: string }, null | string>(
 
     const currentDay = thumbnailJob.currentDay;
     const totalNumberOfThumbails = thumbnailJob.thumbnails.length;
+
+    if (totalNumberOfThumbails === 0) {
+      return null;
+    }
+
     const changeToThumbnail =
       thumbnailJob.thumbnails[currentDay % totalNumberOfThumbails];
 
@@ -39,6 +47,30 @@ export const ThumbnailWorker = new Worker<{ id: string }, null | string>(
       thumbnail: changeToThumbnail,
       thumbnailJob: thumbnailJob,
     });
+
+    if (currentDay !== 0) {
+      const previousDay = currentDay - 1;
+      const previousThumbnail =
+        thumbnailJob.thumbnails[previousDay % totalNumberOfThumbails];
+
+      const currentDate = new Date();
+      const yesterday = sub(currentDate, { days: 1 });
+      const yesterdayInPST = utcToZonedTime(yesterday, "America/Los_Angeles");
+
+      const formatedDate = formatInTimeZone(
+        yesterdayInPST,
+        "America/Los_Angeles",
+        "yyyy-MM-dd"
+      );
+
+      await setAbTestResult({
+        thumbnailJob,
+        date: formatedDate,
+        thumbnail: previousThumbnail,
+        youtubeAccount: thumbnailJob.youtubeAccount,
+      });
+    }
+
     return "Success";
   },
   { connection: redisConnectionOptions }

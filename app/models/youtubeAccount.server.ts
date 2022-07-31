@@ -44,7 +44,6 @@ export const getChannelOfToken = async (token: string) => {
     const channelItems = channelRes.data.items;
 
     const userChannel = channelItems[0];
-    console.log({ channel: JSON.stringify(userChannel, null, 2) });
 
     return ZYoutubeChannelSchema.parse(userChannel);
   } catch (err) {
