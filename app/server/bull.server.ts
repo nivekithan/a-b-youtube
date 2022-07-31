@@ -12,6 +12,7 @@ const thumbnailQueueName = "thumbanilQueue";
 
 const redisConnectionOptions: QueueOptions["connection"] = {
   host: getEnvVar("REDIS_HOST"),
+  password: getEnvVar("REDIS_PASSWORD"),
 };
 
 export const ThumbnailQueue = new Queue<{ id: string }>(thumbnailQueueName, {

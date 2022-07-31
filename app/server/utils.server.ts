@@ -16,6 +16,7 @@ export type EnvVarNames =
   | "DATABASE_URL"
   | "NODE_ENV"
   | "REDIS_HOST"
+  | "REDIS_PASSWORD"
   | "GOOGLE_API_KEY";
 
 export const getEnvVar = (varName: EnvVarNames): string => {
