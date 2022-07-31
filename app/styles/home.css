@@ -100,7 +100,7 @@
   flex-direction: column;
 }
 
-.home-link-input{
+.home-link-input {
   width: 50%;
   font-size: 1.5rem;
   margin: 20px;
@@ -119,7 +119,7 @@
   height: 100%;
   width: 40%;
 }
-.home-input-file-button{
+.home-input-file-button {
   font-size: 1.2rem;
   margin: 20px;
 }
@@ -145,14 +145,18 @@
 .input-display-card {
   width: 100%;
   min-height: 200px;
+  /* max-height: 300px; */
   background-color: var(--black);
   border-radius: 10px;
   margin-bottom: 20px;
   object-fit: cover;
 }
-.input-display-card >img{
+.input-display-card > img {
   width: 100%;
   height: 100%;
+  max-height: 200px;
+  /* max-height: 300px; */
+  aspect-ratio: 16 / 9;
   border-radius: 10px;
 }
 

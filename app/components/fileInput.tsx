@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 
 export type FileInputProps = {
   name: string;
-  // setUploads: Function;
+  withMessageUrls: (urls: string[]) => void;
 };
 
 // const getSelectedFileName = (
@@ -17,21 +17,24 @@ export type FileInputProps = {
 //   return null;
 // };
 
-export const FileInput = ({ name }: FileInputProps) => {
+export const FileInput = ({ name, withMessageUrls }: FileInputProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const [_, doReRender] = useState({});
-
-  // const selectedFileName = getSelectedFileName(fileInputRef);
-  // const isFileSelected = selectedFileName !== null;
-
-  // const fileName = isFileSelected ? selectedFileName : "Select thumbnail";
-  // const buttonText = isFileSelected ? "Remove" : "Select";
 
   const onFileInput = () => {
     const files = fileInputRef.current?.files;
-    // setUploads(files);
-    doReRender({});
+
+    if (files === null || files === undefined || files.length === 0) {
+      return;
+    }
+
+    const fileUrls: string[] = [];
+
+    for (const file of files) {
+      const url = URL.createObjectURL(file);
+      fileUrls.push(url);
+    }
+
+    withMessageUrls(fileUrls);
   };
 
   const onButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -40,30 +43,13 @@ export const FileInput = ({ name }: FileInputProps) => {
     fileInputRef.current?.click();
 
     // if (!isFileSelected) {
-    //   fileInputRef.current?.click();
-    //   return;
-    // }
-
-    // const files = fileInputRef.current?.files;
-
-    // if (files === null || files === undefined) {
-    //   return;
-    // }
-
-    // const fileInput = fileInputRef.current;
-    // if (fileInput === null) {
-    //   return null;
-    // }
-
-    // fileInput.files = new DataTransfer().files;
-    // doReRender({});
   };
 
   return (
     <div>
       <input
         type="file"
-        accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+        accept="image/jpg"
         multiple
         hidden
         name={name}

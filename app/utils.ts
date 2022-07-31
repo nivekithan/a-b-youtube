@@ -41,3 +41,7 @@ export function useMatchesData(
   );
   return route?.data;
 }
+
+export const getFilePreviewUrl = (file: File) => {
+  return URL.createObjectURL(file);
+};
