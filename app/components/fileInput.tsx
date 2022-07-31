@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 export type FileInputProps = {
   name: string;
@@ -20,10 +20,24 @@ export type FileInputProps = {
 export const FileInput = ({ name, withMessageUrls }: FileInputProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  useEffect(() => {
+    const onReset = () => {
+      withMessageUrls([]);
+    };
+    document.getElementById("homePageForm")?.addEventListener("reset", onReset);
+
+    return () => {
+      document
+        .getElementById("homePageForm")
+        ?.removeEventListener("reset", onReset);
+    };
+  }, [withMessageUrls]);
+
   const onFileInput = () => {
     const files = fileInputRef.current?.files;
 
     if (files === null || files === undefined || files.length === 0) {
+      withMessageUrls([]);
       return;
     }
 
@@ -41,8 +55,6 @@ export const FileInput = ({ name, withMessageUrls }: FileInputProps) => {
     e.preventDefault();
 
     fileInputRef.current?.click();
-
-    // if (!isFileSelected) {
   };
 
   return (

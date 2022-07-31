@@ -37,12 +37,14 @@ export const getChannelOfToken = async (token: string) => {
       auth: googleAuthClient,
       part: ["id", "snippet", "contentDetails"],
     });
+
     if (!channelRes.data.items || channelRes.data.items.length === 0)
       throw new Error(`No channel found for passed token`);
 
     const channelItems = channelRes.data.items;
 
     const userChannel = channelItems[0];
+    console.log({ channel: JSON.stringify(userChannel, null, 2) });
 
     return ZYoutubeChannelSchema.parse(userChannel);
   } catch (err) {

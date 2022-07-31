@@ -59,10 +59,10 @@ export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
     return badRequest("Test days must be a number");
   }
 
-  const url = new URL(videoUrl);
-
-  const urlSearchParams = url.searchParams;
-  const videoId = urlSearchParams.get("v");
+  // Ref : https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url
+  const matchVideoIdFromYoutubeLink =
+    /(https?:\/\/)?(((m|www)\.)?(youtube(-nocookie)?|youtube.googleapis)\.com.*(v\/|v=|vi=|vi\/|e\/|embed\/|user\/.*\/u\/\d+\/)|youtu\.be\/)([_0-9a-z-]+)/i;
+  const videoId = videoUrl.match(matchVideoIdFromYoutubeLink)?.[8];
 
   if (!videoId) {
     return badRequest("Choose a valid youtube video");
