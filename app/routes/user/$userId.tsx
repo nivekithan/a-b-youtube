@@ -69,12 +69,15 @@ export default function RenderUserPage() {
 
   return (
     <div className="App flex">
-      {/* <div className="notification-panel">
+      {/* 
         <Notification error="Some error" />
     
       </div> */}
       <Navbar active={activeState} userId={loaderData.clientUser.userId} />
       <Outlet />
+      <div className="hashnode">
+        Made for <a href="/somewhere">Hashnode</a> with 🧡
+      </div>
     </div>
   );
 }

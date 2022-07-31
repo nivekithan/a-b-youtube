@@ -12,7 +12,7 @@ export const Notification = ({ error }: NotificationProps) => {
   useEffect(() => {
     const timerId = setTimeout(() => {
       setShow(false);
-    }, 5000);
+    }, 3_000);
 
     return () => {
       clearTimeout(timerId);
@@ -27,7 +27,10 @@ export const Notification = ({ error }: NotificationProps) => {
             <RiErrorWarningFill />
           </div>
           <div className="notification-text">{error}</div>
-          <button className="notification-cancel" onClick={() => setShow(false)}>
+          <button
+            className="notification-cancel"
+            onClick={() => setShow(false)}
+          >
             <ImCross />
           </button>
         </div>

@@ -21,38 +21,54 @@ export type ResultsProps = {
 };
 
 export const Results = ({ results }: ResultsProps) => {
+  const isResultEmpty = results.length === 0;
+  console.log({ isResultEmpty });
+
   return (
     <div className="hero">
       <div className="list-main flex">
         <div className="list-heading">Test Results</div>
         <div className="list-items">
-          {results.map((res) => {
-            return (
-              <div key={res.title} className="list-item flex">
-                <div className="flex">
-                  <img src={res.img} alt="videos" className="list-item-image" />
-                  <div className="list-item-title">{res.title}</div>
-                </div>
-                <div className="flex">
-                  {res.daysLeft === 0 ? (
-                    <div className="list-status-complete">Completed</div>
-                  ) : (
-                    <div className="list-status-ongoing">
-                      {res.daysLeft} days left
-                    </div>
-                  )}
-                  <Link to={`../record?jobId=${res.jobId}`}>
-                    <div className="card-button">
-                      View Details{" "}
-                      <div className="icon">
-                        <AiOutlineRight />
+          {!isResultEmpty ? (
+            results.map((res) => {
+              return (
+                <div key={res.title} className="list-item flex">
+                  <div className="flex">
+                    <img
+                      src={res.img}
+                      alt="videos"
+                      className="list-item-image"
+                    />
+                    <div className="list-item-title">{res.title}</div>
+                  </div>
+                  <div className="flex">
+                    {res.daysLeft === 0 ? (
+                      <div className="list-status-complete">Completed</div>
+                    ) : (
+                      <div className="list-status-ongoing">
+                        {res.daysLeft} days left
                       </div>
-                    </div>
-                  </Link>
+                    )}
+                    <Link to={`../record?jobId=${res.jobId}`}>
+                      <div className="card-button">
+                        View Details{" "}
+                        <div className="icon">
+                          <AiOutlineRight />
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
                 </div>
+              );
+            })
+          ) : (
+            <div className="no-list-item list-item">
+              <div className="flex">
+                It seems you have not started any test. Start a test from
+                dashboard then check back later
               </div>
-            );
-          })}
+            </div>
+          )}
         </div>
       </div>
     </div>

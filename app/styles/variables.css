@@ -88,3 +88,14 @@ a {
   margin-right: 10px;
   transform: translate(0%, 10%);
 }
+
+.hashnode {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 5px;
+}
+.hashnode a {
+  color: var(--accent-1);
+  text-decoration: none;
+}

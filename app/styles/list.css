@@ -66,3 +66,10 @@
 .setting-add-tilte {
   font-size: 2rem;
 }
+.no-list-item {
+  font-size: 1.5rem;
+}
+.no-list-item a {
+  color: var(--accent-1);
+  text-decoration: none;
+}

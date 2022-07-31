@@ -21,6 +21,7 @@ import {
   useTransition,
 } from "@remix-run/react";
 import { useEffect, useRef } from "react";
+import { Notification } from "~/components/notification";
 
 const ZLoaderSchema = z.object({
   connectedYoutubeAccountsCount: z.number(),
@@ -117,7 +118,8 @@ const useZLoaderData = (): LoaderData => {
 };
 
 export default function RenderUserHomePage() {
-  // const loaderData = useZLoaderData();
+  const loaderData = useZLoaderData();
+  const isNoAccountPresent = loaderData.connectedYoutubeAccountsCount === 0;
   const transition = useTransition();
   const formRef = useRef<HTMLFormElement | null>(null);
   const actionData = useActionData<BadRequest>();
@@ -135,6 +137,11 @@ export default function RenderUserHomePage() {
 
   return (
     <>
+      {actionData?.errorMessage ? (
+        <div className="notification-panel">
+          <Notification error={actionData.errorMessage} />
+        </div>
+      ) : null}
       <Form
         id="homePageForm"
         className="hero"
@@ -142,7 +149,18 @@ export default function RenderUserHomePage() {
         method="post"
         ref={formRef}
       >
-        <Home />
+        {" "}
+        {isNoAccountPresent ? (
+          <div className="no-channel flex">
+            <div className="no-channel-card">
+              No channel is linked
+              <br />
+              <a href={loaderData.googleAuthUrl}>Link your youtube Accout</a>
+            </div>
+          </div>
+        ) : (
+          <Home />
+        )}
       </Form>
     </>
   );

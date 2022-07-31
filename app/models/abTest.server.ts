@@ -1,6 +1,5 @@
 import type { ThumbnailJob, Thumbnails, YoutubeAccount } from "@prisma/client";
 import { json } from "@remix-run/server-runtime";
-import { format } from "date-fns";
 import { google } from "googleapis";
 import { nanoid } from "nanoid";
 import { z } from "zod";

@@ -41,6 +41,7 @@ const Document = ({ children, title }: DocumentProps) => {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+      
       </body>
     </html>
   );
