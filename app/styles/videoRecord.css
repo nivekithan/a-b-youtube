@@ -108,7 +108,12 @@
   color: var(--gray);
   font-size: 1.4rem;
 }
-
+.record-not-avaliable {
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  color: var(--accent-1);
+}
 /*
 **Comparison Graph**
 */

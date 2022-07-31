@@ -122,11 +122,9 @@ export const createAbtest = async ({ formData, userId }: CreateAbTestArgs) => {
     { id: id },
     {
       repeat: {
-        // cron: "10 0 * * *",
-        // tz: "America/Los_Angeles",
-        every: 1_000,
+        cron: "10 0 * * *",
+        tz: "America/Los_Angeles",
         limit: thumbnailJob.testDays,
-        immediately: true,
       },
     }
   );

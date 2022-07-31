@@ -30,6 +30,11 @@ const Timeline = ({ thumbnailsData, videoName, average }: TimeLineProps) => {
             const thumbnailScore =
               thumbnailRes.averageViewDuration * thumbnailRes.clickThroughRate;
 
+            const differenceFromMedian = (thumbnailScore / average - 1) * 100;
+
+            const isInvalidAverage =
+              Number.isNaN(differenceFromMedian) || !differenceFromMedian;
+
             return (
               <div
                 key={thumbnailRes.thumbnailResultId}
@@ -41,10 +46,11 @@ const Timeline = ({ thumbnailsData, videoName, average }: TimeLineProps) => {
                 <div className="card-timeline-item-date">
                   {thumbnailRes.date}
                 </div>
-                <div className="card-timeline-item-stats">
-                  {((thumbnailScore / average - 1) * 100).toFixed(2)}% from
-                  median
-                </div>
+                {isInvalidAverage ? null : (
+                  <div className="card-timeline-item-stats">
+                    {differenceFromMedian}% from median
+                  </div>
+                )}
                 <div className="card-timeline-item-gradient"></div>
                 <div className="card-timeline-item-image-gradient"></div>
                 <img
@@ -73,7 +79,9 @@ export type BestThumbnailProps =
 const BestThumbnail = (props: BestThumbnailProps) => {
   if (props.type === "notAvaliable") {
     return (
-      <div className="card-content-bg flex">Not enough data avaliable</div>
+      <div className="card-content-bg flex record-not-avaliable">
+        Not enough data avaliable. Check back later
+      </div>
     );
   }
 
