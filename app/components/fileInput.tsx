@@ -5,18 +5,6 @@ export type FileInputProps = {
   withMessageUrls: (urls: string[]) => void;
 };
 
-// const getSelectedFileName = (
-//   fileInputRef: MutableRefObject<HTMLInputElement | null>
-// ) => {
-//   const selectedFileName = fileInputRef.current?.files?.[0]?.name;
-
-//   if (typeof selectedFileName === "string") {
-//     return selectedFileName;
-//   }
-
-//   return null;
-// };
-
 export const FileInput = ({ name, withMessageUrls }: FileInputProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 

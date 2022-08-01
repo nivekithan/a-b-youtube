@@ -1,23 +1,24 @@
-node_modules
+node_modules/
+
 
 .env
 redis.env
 prod.env
 
-.github
+.github/
+.git/
+/public/build
+/e2e/
+/mocks/
+/planent-scale/
+/test/
 
-/e2e
-/mocks
-/planent-scale
-/seedData
-/test
+/cypress/screenshots/
+/cypress/videos/
 
-/cypress/screenshots
-/cypress/videos
+/prisma/data.db/
+/prisma/data.db-journal/
 
-/prisma/data.db
-/prisma/data.db-journal
-
-/app/styles/app.css
-/storage
-/playwright-report
+/app/styles/app.css/
+/storage/
+/playwright-report/

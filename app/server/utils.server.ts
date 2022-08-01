@@ -17,7 +17,9 @@ export type EnvVarNames =
   | "NODE_ENV"
   | "REDIS_HOST"
   | "REDIS_PASSWORD"
-  | "GOOGLE_API_KEY";
+  | "REDIS_USER"
+  | "GOOGLE_API_KEY"
+  | "REDIS_PORT";
 
 export const getEnvVar = (varName: EnvVarNames): string => {
   const envVarValue = process.env[varName];

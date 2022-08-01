@@ -6,4 +6,4 @@
 # Learn more: https://community.fly.io/t/sqlite-not-getting-setup-properly/4386
 
 set -ex
-pnpm run start
+    npm run start

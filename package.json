@@ -10,12 +10,11 @@
     "prisma:seed": "prisma db push --force-reset && prisma db seed",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
-    "setup": "prisma generate && prisma migrate deploy && prisma db seed",
+    "setup": "prisma generate",
     "start": "remix-serve build",
     "start:mocks": "binode --require ./mocks -- @remix-run/serve:remix-serve build",
     "test": "playwright test",
-    "typecheck": "tsc -b && tsc -b cypress",
-    "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run"
+    "typecheck": "tsc -b && tsc -b cypress"
   },
   "prettier": {},
   "eslintIgnore": [
@@ -37,7 +36,7 @@
     "ioredis": "^5.2.1",
     "jwt-decode": "^3.1.2",
     "nanoid": "3.3.4",
-    "node-fetch": "^3.2.9",
+    "node-fetch": "2.6.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.4.0",
